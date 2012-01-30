@@ -24,6 +24,10 @@ public class GenericObject {
 		}
 	}
 	
+	public Object getSlotByName(String name) {
+		return getSlot(_slotnames.lookupIndex(name));
+	}
+	
 	public void setSlot(int idx, Object val) {
 		try {
 			_slots[idx]=val;
@@ -33,5 +37,9 @@ public class GenericObject {
 				newslots[i]=_slots[i];
 			}
 		}
+	}
+	
+	public void setSlotByName(String name, Object val) {
+		setSlot(_slotnames.lookupIndex(name),val);
 	}
 }
