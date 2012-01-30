@@ -1,6 +1,6 @@
 package exml.objects;
 
-public class GenericAccessor<T>  implements IAccessor<GenericObject,T> {
+public class GenericAccessor<Obj extends GenericObject,T>  implements IAccessor<Obj,T> {
 	private int _offset;
 	
 	public GenericAccessor(int idx) {
@@ -14,7 +14,7 @@ public class GenericAccessor<T>  implements IAccessor<GenericObject,T> {
 	}
 
 	@Override
-	public void put(GenericObject o, T val) {
+	public void put(Obj o, T val) {
 		o.setSlot(_offset, val);
 	}
 	

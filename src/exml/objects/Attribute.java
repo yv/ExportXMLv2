@@ -1,8 +1,7 @@
 package exml.objects;
 
-import java.util.Map;
-
 import exml.Document;
+import exml.MissingObjectException;
 
 public final class Attribute<Obj,Val> {
 	public final String name;
@@ -13,7 +12,11 @@ public final class Attribute<Obj,Val> {
 		name=nm; accessor=acc; converter=conv;
 	}
 	
-	void putProperty(Obj m, Map<String,String> d, Document doc) {
-		d.put(name,converter.convertToString(accessor.get(m), doc));
+	public void putString(Obj m, String s, Document<?> doc) throws MissingObjectException {
+		accessor.put(m, converter.convertFromString(s, doc));
+	}
+	
+	public String getString(Obj m, Document<?> doc) {
+		return converter.convertToString(accessor.get(m), doc);
 	}
 }

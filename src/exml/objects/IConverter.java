@@ -1,10 +1,9 @@
 package exml.objects;
 
 import exml.Document;
-import exml.util.Graph;
+import exml.MissingObjectException;
 
 public interface IConverter<T> {
-	String convertToString(T obj, Document doc);
-	T convertFromString(String s, Document doc);
-	void getUpDown(INamedObject src, T val, Document doc, Graph g);
+	String convertToString(T obj, Document<?> doc);
+	T convertFromString(String s, Document<?> doc) throws MissingObjectException;
 }

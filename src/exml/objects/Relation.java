@@ -3,29 +3,25 @@ package exml.objects;
 import java.util.ArrayList;
 import java.util.List;
 
-import exml.Document;
-import exml.util.Graph;
-
-public class Relation<Obj extends INamedObject,Val> {
+public class Relation<Obj extends GenericObject, Val extends GenericObject> {
 	public final String name;
-	public final IAccessor<Obj,List<Val>> accessor;
-	@SuppressWarnings("unchecked")
-	public final List<Attribute> relAttrs=new ArrayList<Attribute>();
-	public Relation(String nm, IAccessor<Obj,List<Val>> acc) {
-		name=nm; accessor=acc;
+	public final IAccessor<Obj, List<Val>> accessor;
+	public final ObjectSchema<Val> schema;
+	
+	public Relation(String name_val, IAccessor<Obj,List<Val>> accessor_val,
+			ObjectSchema<Val> schema_val)
+	{
+		name=name_val;
+		accessor=accessor_val;
+		schema=schema_val;
 	}
 	
-	public <T> void addRelAttribute(Attribute<Val,T> att) {
-		relAttrs.add(att);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void getUpDown(Obj src, Document doc, Graph g) {
-		List<Val> vals=accessor.get(src);
-		for (Val v: vals) {
-			for (Attribute att:relAttrs) {
-				att.converter.getUpDown(src, att.accessor.get(v), doc, g);
-			}
+	public List<Val> get_relation(Obj obj) {
+		List<Val> result=accessor.get(obj);
+		if (result==null) {
+			result=new ArrayList<Val>();
+			accessor.put(obj, result);
 		}
+		return result;
 	}
 }
