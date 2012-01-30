@@ -45,7 +45,7 @@ public class GenericObject {
 	}
 
 	/**
-	 * sets attribute
+	 * sets the attribute
 	 * @param name name of attribute
 	 * @param val attribute value
 	 */
