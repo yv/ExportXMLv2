@@ -24,6 +24,11 @@ public class GenericObject {
 		}
 	}
 	
+	/**
+	 * read an attribute
+	 * @param name
+	 * @return the attribute value
+	 */
 	public Object getSlotByName(String name) {
 		return getSlot(_slotnames.lookupIndex(name));
 	}
@@ -38,7 +43,12 @@ public class GenericObject {
 			}
 		}
 	}
-	
+
+	/**
+	 * sets attribute
+	 * @param name name of attribute
+	 * @param val attribute value
+	 */
 	public void setSlotByName(String name, Object val) {
 		setSlot(_slotnames.lookupIndex(name),val);
 	}
