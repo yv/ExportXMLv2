@@ -21,6 +21,7 @@ public class MarkableLevel<T extends GenericMarkable> {
 	private final SortedSet<T> _markables =
         new TreeSet<T>(GenericMarkable.DiscourseOrder.instance);
 	public final Document<?> doc;
+	private int max_len=0;
 	
 	public MarkableLevel(ObjectSchema<T> sc, Document<?> d) {
 		schema=sc;
@@ -50,6 +51,10 @@ public class MarkableLevel<T extends GenericMarkable> {
 	 * @param val the markable
 	 */
 	public void addMarkable(T val) {
+		int m_len=val.getEnd()-val.getStart();
+		if (m_len>max_len) {
+			max_len=m_len;
+		}
 		_markables.add(val);
 	}
 	
@@ -76,10 +81,21 @@ public class MarkableLevel<T extends GenericMarkable> {
 		dummyMarkable.setEnd(-1);
 		SortedSet<T> part=_markables.tailSet(dummyMarkable);
 		for (T m: part) {
-			if (m.getEnd()>=end) {
+			if (m.getStart()>=end) {
 				break;
 			}
 			result.add(m);
+		}
+		return result;
+	}
+	
+	public List<T> getOverlappingMarkables(int start, int end)
+	{
+		List<T> result=new ArrayList<T>();
+		for (T m: getMarkablesInRange(start-max_len, end)) {
+			if (m.getStart()<end && m.getEnd()>start) {
+				result.add(m);
+			}
 		}
 		return result;
 	}
