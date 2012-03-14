@@ -127,6 +127,7 @@ public class DocumentReader {
 						_doc.nameForObject(new_term);
 					}
 					setObjectAttributes(new_term,_doc.terminalSchema(),elm);
+					new_term.set_word(word_val);
 					ev=_reader.nextTag();
 					if (!ev.isEndElement()) {
 						throw new RuntimeException("not a closing tag:"+ev);

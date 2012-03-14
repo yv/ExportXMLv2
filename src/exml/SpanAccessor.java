@@ -3,8 +3,10 @@ package exml;
 import exml.objects.IAccessor;
 import gnu.trove.TIntArrayList;
 
-public class SpanAccessor implements IAccessor<GenericMarkable,TIntArrayList>{
+public class SpanAccessor<T extends GenericMarkable> implements IAccessor<T,TIntArrayList>{
 
+	public static final SpanAccessor instance = new SpanAccessor();
+	
 	@Override
 	public TIntArrayList get(GenericMarkable m) {
 		TIntArrayList result=new TIntArrayList();

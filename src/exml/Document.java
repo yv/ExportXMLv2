@@ -92,6 +92,52 @@ public class Document<T extends GenericTerminal> {
 		return _terminals.get(idx);
 	}
 	
+	/**
+	 * returns only the 'form' attribute of the nth token of the document
+	 * @param idx token id
+	 * @return word form of that token
+	 */
+	public String getWord(int idx) {
+		return _terminals.get(idx).get_word();
+	}
+	
+	/**
+	 * returns only the 'form' attribute of the nth token of the document
+	 * @param idx token id
+	 * @return pos of that token
+	 */
+	public String getPOS(int idx) {
+		return (String)_terminals.get(idx).getSlotByName("pos");
+	}	
+	
+	/**
+	 * returns only the 'lemma' attribute of the nth token of the document
+	 * @param idx token id
+	 * @return lemma of that token
+	 */
+	public String getLemma(int idx) {
+		return (String)_terminals.get(idx).getSlotByName("lemma");
+	}
+	
+	/**
+	 * returns only the 'deprel' attribute of the nth token of the document
+	 * @param idx token id
+	 * @return dependency relation of that token
+	 */
+	public String getDeprel(int idx) {
+		return (String)_terminals.get(idx).getSlotByName("deprel");
+	}
+	
+	/**
+	 * returns only the 'morph' attribute of the nth token of the document
+	 * @param idx token id
+	 * @return morphological information of that token
+	 */
+	public String getMorph(int idx) {
+		return (String)_terminals.get(idx).getSlotByName("morph");
+	}
+	
+	
 	public static final String nameChars="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-";
 	private static Random rnd=new Random();
 	public static final String randomName(String prefix, int len) {
@@ -137,7 +183,7 @@ public class Document<T extends GenericTerminal> {
 							return new GenericMarkable(sc);
 						}
 			});
-			schema.addAttribute("span", SpanConverter.instance);
+			schema.addAttribute("span", SpanConverter.instance, SpanAccessor.instance);
 			_schemas_by_name.put(name, schema);
 		}
 		return schema;

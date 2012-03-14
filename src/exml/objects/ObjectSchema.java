@@ -21,6 +21,10 @@ public class ObjectSchema<T extends GenericObject> {
 		attrs.put(name, new Attribute<T,V>(name, new GenericAccessor<T,V>(idx), cvt));
 	}
 	
+	public <T2,V> void addAttribute(String name, IConverter<V> cvt, IAccessor<T,V> avt) {
+		attrs.put(name, new Attribute<T,V>(name, avt, cvt));
+	}	
+	
 	public <V extends GenericObject> void addRelation(String name, ObjectSchema<V> schema) {
 		int idx=slotnames.lookupIndex(name);
 		rels.put(name,new Relation<T,V>(name, new GenericAccessor<T,List<V>>(idx), schema));

@@ -1,6 +1,8 @@
 package exml;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.regex.Pattern;
 
 import exml.objects.NamedObject;
 import exml.objects.ObjectSchema;
@@ -32,6 +34,10 @@ public class GenericMarkable extends NamedObject {
 		_holes=holes;
 	}
 	
+	public int getStart() {
+		return _start;
+	}	
+	
 	public int getEnd() {
 		return _end;
 	}
@@ -40,9 +46,22 @@ public class GenericMarkable extends NamedObject {
 		return _holes;
 	}
 
-	public int getStart() {
-		return _start;
+	
+	/**
+	 * concatenates the words in this Markable and returns them as one String 
+	 * (space-separated). 
+	 * @param doc the Document 
+	 * @return a String of the words in this document separated by whitespace
+	 */
+	public String getWords(Document doc) {
+		StringBuffer concat = new StringBuffer();
+		for (int i= _start; i<_end; i++) {
+			concat.append(doc.getWord(i)+" ");
+		}
+		String s = concat.toString();
+		return s.substring(0,s.length()-1);
 	}
+
 	
 	/**
 	 * orders markables by start, then by length, and then using their object ID
