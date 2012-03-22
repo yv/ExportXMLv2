@@ -94,7 +94,13 @@ public class DocumentReader {
 					ObjectSchema<? extends GenericObject> edgeSchema=_doc.edgeSchemaByName(edge_name, true);
 					readAttributes(edgeSchema);
 					for (String node_name: elm.getAttributeByName(qname_parent).getValue().split("\\|")) {
-						ObjectSchema<? extends NamedObject> nodeSchema=_doc.markableSchemaByName(node_name,true);
+						ObjectSchema<? extends NamedObject> nodeSchema;
+						if ("word".equals(node_name)) {
+							System.err.println("terminal edge:"+edge_name);
+							nodeSchema=_doc.terminalSchema();
+						} else {
+							nodeSchema=_doc.markableSchemaByName(node_name,true);
+						}
 						nodeSchema.addRelation(edge_name, edgeSchema);
 					}
 				}
@@ -129,8 +135,25 @@ public class DocumentReader {
 					setObjectAttributes(new_term,_doc.terminalSchema(),elm);
 					new_term.set_word(word_val);
 					ev=_reader.nextTag();
-					if (!ev.isEndElement()) {
-						throw new RuntimeException("not a closing tag:"+ev);
+					while (!ev.isEndElement()) {
+						StartElement sub=ev.asStartElement();
+						String relName=sub.getName().getLocalPart();
+						Relation relSchema;
+						relSchema=_doc.terminalSchema().rels.get(relName);
+						if (relSchema!=null) {
+							GenericObject relObj=relSchema.schema.createMarkable();
+							setObjectAttributes(relObj,relSchema.schema,sub);
+							relSchema.get_relation(new_term).add(relObj);
+							// read close-tag for relation
+							ev=_reader.nextTag();
+							if (!ev.isEndElement()) {
+								throw new RuntimeException("not a closing tag:"+ev);
+							}
+							// read either close-tag for word or open tag for new edge
+							ev=_reader.nextTag();
+						} else {
+							throw new RuntimeException("Should close the word tag:"+ev);
+						}
 					}
 					continue;
 				}

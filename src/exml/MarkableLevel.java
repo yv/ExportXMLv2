@@ -89,13 +89,6 @@ public class MarkableLevel<T extends GenericMarkable> {
 		return result;
 	}
 	
-	/**
-	 * Retrieves all Markables from this MarkableLevel that overlap a given range. 
-	 * Range is [), i.e. an edu from 0 to 5 is indicated by start=0, end=6. 
-	 * @param start
-	 * @param end
-	 * @return a list of Markables
-	 */
 	public List<T> getOverlappingMarkables(int start, int end)
 	{
 		List<T> result=new ArrayList<T>();
