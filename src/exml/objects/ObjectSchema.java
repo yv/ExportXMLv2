@@ -25,6 +25,10 @@ public class ObjectSchema<T extends GenericObject> {
 		attrs.put(name, new Attribute<T,V>(name, avt, cvt));
 	}	
 	
+	public Attribute<T,?> getAttribute(String name) {
+		return attrs.get(name);
+	}
+	
 	public <V extends GenericObject> void addRelation(String name, ObjectSchema<V> schema) {
 		int idx=slotnames.lookupIndex(name);
 		rels.put(name,new Relation<T,V>(name, new GenericAccessor<T,List<V>>(idx), schema));

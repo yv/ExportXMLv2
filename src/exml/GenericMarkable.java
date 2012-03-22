@@ -38,6 +38,10 @@ public class GenericMarkable extends NamedObject {
 		return _start;
 	}	
 	
+	/**
+	 * end = end+1
+	 * @return
+	 */
 	public int getEnd() {
 		return _end;
 	}
@@ -56,7 +60,7 @@ public class GenericMarkable extends NamedObject {
 	public String getWords(Document doc) {
 		StringBuffer concat = new StringBuffer();
 		for (int i= _start; i<_end; i++) {
-			concat.append(doc.getWord(i)+" ");
+			concat.append(doc.getAttribute("word",i)+" ");
 		}
 		String s = concat.toString();
 		return s.substring(0,s.length()-1);

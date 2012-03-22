@@ -1,14 +1,18 @@
 package exml;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import exml.objects.Attribute;
 import exml.objects.GenericObject;
 import exml.objects.GenericObjectFactory;
+import exml.objects.IAccessor;
 import exml.objects.NamedObject;
 import exml.objects.ObjectSchema;
+import exml.objects.Relation;
 
 /** represents one ExportXMLv2 corpus, including markable schemas for terminals
  * (normally instances of <code>GenericTerminal</code> or a subclass)
@@ -93,49 +97,70 @@ public class Document<T extends GenericTerminal> {
 	}
 	
 	/**
-	 * returns only the 'form' attribute of the nth token of the document
-	 * @param idx token id
-	 * @return word form of that token
+	 * Returns a list of all terminals in the document. 
+	 * Changes to this list change the document structure.
+	 * @return list of terminals
 	 */
-	public String getWord(int idx) {
-		return _terminals.get(idx).get_word();
+	public List<T> getTerminals() {
+		return Collections.unmodifiableList(_terminals);
 	}
 	
 	/**
-	 * returns only the 'form' attribute of the nth token of the document
-	 * @param idx token id
-	 * @return pos of that token
+	 * Returns a list of all terminals in the document that have the target relation. 
+	 * Changes to this list change the document structure.
+	 * @return list of terminals
 	 */
-	public String getPOS(int idx) {
-		return (String)_terminals.get(idx).getSlotByName("pos");
+	public List<T> getTerminalsWithEdge(String relName) {
+		ArrayList<T> terminalsWithRel = new ArrayList<T>();
+		Relation<T,?> att = _tschema.rels.get(relName);
+		IAccessor<T,?> accessor = att.accessor;
+		for (T t: _terminals) {
+			 if (accessor.get(t) != null) {
+				 terminalsWithRel.add(t);
+			 }
+		}
+		return terminalsWithRel;
 	}	
 	
 	/**
-	 * returns only the 'lemma' attribute of the nth token of the document
+	 * Returns the value of the input attribute of the nth token of the document.
+	 * Can be null if the given token does not have the target attribute.
+	 * @param attributeName name of the target attribute
 	 * @param idx token id
-	 * @return lemma of that token
+	 * @return target attribute value of that token; null if token has no such attribute
 	 */
-	public String getLemma(int idx) {
-		return (String)_terminals.get(idx).getSlotByName("lemma");
-	}
+	public String getAttribute(String attributeName, int idx) {
+		if (attributeName.equals("word")) {
+			return (String)_terminals.get(idx).get_word(); //special treatment necessary
+		}
+		return (String)_terminals.get(idx).getSlotByName(attributeName);
+	}	
 	
 	/**
-	 * returns only the 'deprel' attribute of the nth token of the document
-	 * @param idx token id
-	 * @return dependency relation of that token
+	 * Returns the values of the given attributes for each terminal in the given span. 
+	 * @param attributeNames array of names of target attributes
+	 * @param idStart token id of first token in the span
+	 * @param idEnd token id of the last token in the span
+	 * @return ArrayList of String arrays, one such array for each token in the span. 
+	 * 			Each array contains the values of the target attributes for this token. 
+	 * 			Can contain null values if a given token does not have the target attribute.
 	 */
-	public String getDeprel(int idx) {
-		return (String)_terminals.get(idx).getSlotByName("deprel");
-	}
-	
-	/**
-	 * returns only the 'morph' attribute of the nth token of the document
-	 * @param idx token id
-	 * @return morphological information of that token
-	 */
-	public String getMorph(int idx) {
-		return (String)_terminals.get(idx).getSlotByName("morph");
-	}
+	public ArrayList<String[]> getAttributes(String[] attributeNames, int idStart, int idEnd) {
+		ArrayList<String[]> att = new ArrayList<String[]>();
+		for (int i= idStart; i<= idEnd; i++) {
+			String[] w = new String[attributeNames.length];
+			GenericTerminal t = _terminals.get(i);
+			for (int j=0; j<attributeNames.length; j++) {
+				if (attributeNames[j].equals("word")) {
+					w[j] = (String)t.get_word();
+				} else {
+					w[j] = (String)t.getSlotByName(attributeNames[j]);
+				}
+			}
+			att.add(w);
+		}
+		return att;
+	}	
 	
 	
 	public static final String nameChars="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-";
@@ -241,8 +266,8 @@ public class Document<T extends GenericTerminal> {
 	}
 	
 	/**
-	 * adds a new terminal
-	 * @param word the token to be added
+	 * adds a new termina
+	 * 	 * @param word the token to be added
 	 * @return the terminal object
 	 */
 	public T createTerminal(String word) {
