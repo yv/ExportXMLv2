@@ -96,7 +96,6 @@ public class DocumentReader {
 					for (String node_name: elm.getAttributeByName(qname_parent).getValue().split("\\|")) {
 						ObjectSchema<? extends NamedObject> nodeSchema;
 						if ("word".equals(node_name)) {
-							System.err.println("terminal edge:"+edge_name);
 							nodeSchema=_doc.terminalSchema();
 						} else {
 							nodeSchema=_doc.markableSchemaByName(node_name,true);
@@ -136,6 +135,7 @@ public class DocumentReader {
 					new_term.set_word(word_val);
 					ev=_reader.nextTag();
 					while (!ev.isEndElement()) {
+						// terminals should not have embedded nodes, but may have edges
 						StartElement sub=ev.asStartElement();
 						String relName=sub.getName().getLocalPart();
 						Relation relSchema;

@@ -1,0 +1,195 @@
+%% -*- encoding: utf-8 -*-
+\documentclass[a4paper,11pt]{report}
+\usepackage{url}
+\usepackage{times}
+\usepackage[utf8]{inputenc}
+
+\title{ExportXMLv2: description of XML file format and Java library}
+\author{Yannick Versley}
+\date{}
+
+\begin{document}
+\maketitle
+
+\chapter{The EXML file format}
+The ExportXMLv2 file format consists of two parts: a \textbf{schema} section,
+which describes the types of objects used as terminals an markables, and
+a \textbf{body} section that contains a document with annotations according to
+that schema.
+
+\section{Data Model}
+A document consists of the following kinds of objects:
+
+\begin{itemize}
+\item A \textbf{terminal} represents one token in a document and the annotations
+directly pertaining to that token (part of speech, lemma, dependency, \dots).
+In an XML file, terminals have an \texttt{xml:id} property which uniquely identifies
+them. Text spans are expressed in terms of terminal IDs (usually in the form of
+\texttt{word\_2..word\_3}, references to terminals also use its ID.
+\item A \textbf{markable} represents an annotated span of text (a sentence, syntactic phrase,
+discourse EDU, \dots). In an XML file, markables have an \texttt{xml:id} property
+that uinquely identifies them (in references from other markables or terminals).
+\item An \textbf{edge} is associated to a terminal or markable, and contains
+some attributes of its own. Edges cannot be referenced and do not have an ID property.
+\end{itemize}
+
+
+\section{The Schema}
+The schema part of the XML file (enclosed with \texttt{<schema>} tags)
+contains information describing the object types used in an EXML document
+and the attributes it contains.
+
+\begin{itemize}
+\item A \texttt{tnode} element describes the type of terminals with it attributes.
+The terminal type \emph{must} be called \emph{word} and the \texttt{tnode}
+must have a \texttt{name="word"} XML attribute.
+\item a \texttt{node} element describes the type of the markables contained
+in one markable level (the one mentioned in the \texttt{name} XML attribute),
+with its object attributes.
+\item a \texttt{edge} element describes the attributes that an edge has,
+and the markables/terminals it can occur with (using the \texttt{parent}
+XML attribute).
+\end{itemize}
+
+All three kinds of objects can have attributes, which in turn can be of
+several kinds:
+\begin{itemize}
+\item \textbf{String attributes} are introduced by a \texttt{text-attr}
+node in the schema and can contain an arbitrary string.
+\item \textbf{Enumeration attributes} are introduced by a \texttt{enum-attr}
+node in the schema. An object attribute of the enumeration type can contain
+one of a fixed number of values. The declaration of an enumeration attribute
+can list the possible values in the enumeration (and some explanation for
+that value) with \texttt{val} elements inside the \texttt{enum-attr} declaration.
+\item \textbf{References} are introduced by a \texttt{node-ref} node in the schema.
+The strings that these attributes contain in the XML file are translated to the
+objects (markable or terminal) that they reference through the use of their \texttt{xml:id}
+attribute.
+\end{itemize}
+
+\section{The Document Body}
+The document body is contained in the XML file, enclosed with a \texttt{body} tag.
+The terminals and markables of the document (together with any edges attached to them)
+are contained inside that XML section, and each terminal, markable and edge
+has one XML tag with its attributes.
+
+The order of opening and closing tags is as follows:
+\begin{itemize}
+\item The tags corresponding to \textbf{terminals} are ordered
+as they occur in the document (i.e., in reading order). The XML
+tag for a terminal is empty except for the edges that belong to it.
+\item The tags corresponding to \textbf{markables} start at the
+position where their span starts. They either (indirectly or directly)
+contain all the terminals that are in their span, or they are serialized
+in \emph{truncated} form, where their XML span is only a part of their actual
+span. For markables that are truncated in the serialization or those
+that contain holes, a \texttt{span} attribute contains the actual span
+for the markable.
+\item The tags corresponding to an \textbf{edge} starts within the tag for the
+object (terminal or markable) that it belongs to, with no tags corresponding
+to markables or terminal nodes intervening (i.e., directly after the parent
+object's starting tag, except for other edges).
+\end{itemize}
+
+\section{Hierarchy Order}
+In ordering the XML tags for different objects (with the same span
+or with overlapping spans), the EXML format respects a \emph{hierarchy order},
+a partial ordering of objects:
+
+\begin{itemize}
+\item Terminals are always \emph{inside} the markables that they overlap.
+Markables are never \emph{inside} another.
+\item A markable with a span that is a sub-span of another markable's is
+\emph{inside} that other markable.
+\item A markable level can be declared with a \texttt{locality}, by
+putting the name of the locality markable level in the \texttt{locality}
+attribute in the declaring \texttt{node} tag. A markable on a given markable
+level is always \emph{inside} the smallest enclosing markable on the level's
+locality markable layer. (Example: When a \texttt{sentence} markable and
+a \texttt{node} syntax markable have the same span, the \texttt{sentence}
+markable is the outer one because \emph{sentence} is the locality of
+\emph{node}).
+\item A markable layer can have a \texttt{node-ref} declaration with a
+\texttt{restriction="up"} attribute. In that case, a markable is \emph{inside}
+the target of that reference. If there is a \texttt{node-ref} declaration
+with a \texttt{restricion="down"} attribute, the target of the reference is \emph{inside}
+the markable that (directly or indirectly) has the reference.\footnote{The \texttt{parent}
+attribute for syntax nonterminals would be good candidates for \texttt{restriction="up"}.
+Currently they are not declared as such.}
+\end{itemize}
+
+\section{An Example Document}
+Here's a small example document illustrating some of the principles mentioned earlier:
+
+\begin{verbatim}
+<?xml version="1.0"?>
+<exml-doc>
+<schema>
+<tnode name="word">
+  <text-attr name="form"/>
+</tnode>
+<node name="A">
+<text-attr name="B"/>
+</node>
+</schema>
+\end{verbatim}
+
+In the first part of the document, two kinds of objects are described: terminals that have the
+type name ``\emph{word}'', with an attribute named \emph{form} 
+and one kind of markables that has the name ``\emph{A}'', with
+an attribute called ``\emph{B}''.
+
+\begin{verbatim}
+<body serialization="inline">
+<A xml:id="a1" span="t1..t3" B="42">
+<word xml:id="t1" form="super"/>
+</A>
+<A xml:id="a2">
+<word xml:id="t2" form="cali"/>
+<word xml:id="t3" form="fragilisti"/>
+<word xml:id="t4" form="expi"/>
+</A>
+<word xml:id="t5" form="aligetic"/>
+</body>
+\end{verbatim}
+There are two \texttt{A} markables. The first one is truncated and contains an
+explicit span from \texttt{t1} to \texttt{t3}. The second one is not truncated
+and has an implicit span corresponding to the enclosed terminals -- i.e., from
+\texttt{t2} to \texttt{t4}.
+
+\chapter{The Java Library}
+The Java library constructs an in-memory representation from the form in an EXML
+file. In this, a \texttt{Document} object contains a series of terminals (usually
+as \texttt{GenericTerminal} objects) and one or several \texttt{MarkableLevel}
+objects that allow to access the markables of one particular level (e.g.,
+all \texttt{node} objects from the syntax layer, or all \texttt{ne}
+objects from the named entity layer).
+
+\section{The Document object}
+Document objects are declared in the class \texttt{exml.Document}. The static method
+\texttt{createDocument} allows to create a new document with \texttt{GenericTerminal}
+terminals.
+
+A document contains a list of terminals and a mapping of object IDs (the \texttt{xml:id}
+attributes in the XML file) to actual objects.
+\begin{itemize}
+\item \texttt{getTerminal(int idx)} returns the terminal at the corresponding
+positions. Terminals are numbered from 0 on in reading order.
+\item \texttt{getTerminals()} returns a list with all terminals.
+\item \texttt{getTerminalsWithEdge(String relName)} returns all terminals
+that have a \texttt{relName} edge. (Example: connective or word sense annotations).
+\item \texttt{terminalSchema()} returns the object schema for terminals.
+\item \texttt{getAttributes(String[] attributeNames, int idStart, int idEnd)} is
+a convenience function that returns a table (array of arrays) with the attributes from
+\texttt{attributeNames} in the terminal range from \texttt{idStart} to \texttt{idEnd} (inclusive).
+\item \texttt{markableLevelByName(String name, boolean create)} returns the markable level
+with the given name. If it does not exist and \texttt{create} is true, a new markable
+level is created.
+\end{itemize}
+
+\section{MarkableLevel}
+A given \texttt{MarkableLevel} object manages all the markables for one given markable
+level (e.g., all named entity annotations). The simplest method to get hold of a new markable
+level is to call \texttt{markableLevelByName} on a document with \texttt{create=true}.
+\end{document}
+
