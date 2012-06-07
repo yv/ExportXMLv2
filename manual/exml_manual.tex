@@ -188,8 +188,71 @@ level is created.
 \end{itemize}
 
 \section{MarkableLevel}
-A given \texttt{MarkableLevel} object manages all the markables for one given markable
+A given \texttt{exml.MarkableLevel} object manages all the markables for one given markable
 level (e.g., all named entity annotations). The simplest method to get hold of a new markable
 level is to call \texttt{markableLevelByName} on a document with \texttt{create=true}.
+
+On a MarkableLevel, you can create a markable using the \texttt{addMarkable} method --
+either giving start/end position and a dictionary of attributes, or by first creating
+a \texttt{GenericMarkable} object (with the correct span and attributes) and then
+calling \texttt{addMarkable} with it.
+
+Several methods make it easier to find markables at a specific position:
+\begin{itemize}
+\item \texttt{getMarkables} returns all markables on that markable level.
+\item \texttt{getMarkablesInRange(start,end)} returns all markables starting
+between \texttt{start} and \texttt{end}.
+\item \texttt{getOverlappingMarkables(start,end)} returns all markables
+that overlap the range between \texttt{start} and \texttt{end} (including
+those that start before \texttt{start}).
+\end{itemize}
+
+\section{GenericObject, ObjectSchema and Attribute}
+\texttt{exml.objects.GenericObject} is a class that allows for the efficient access to
+(collections of) objects that are similar to each other. Both \texttt{GenericTerminal}
+and \texttt{GenericMarkable} are subclasses of \texttt{GenericObject} and allow to
+access their attributes in much the same way: Each object has a sequence of named
+slots, which contain Java objects (most commonly, strings) that can be accessed either
+by name or by slot index. The correspondence between names and slot indices is the
+same for objects of one particular type (i.e., all markables on one markable level,
+all terminals, \dots)
+
+The simplest way to access a \texttt{GenericObject} is to use the \texttt{getSlotByName}
+and \texttt{setSlotByName} methods: by specifying the name of a slot, it is possible to
+access it.
+
+A slightly more involved way of accessing a particular attribute in a
+collection of \texttt{GenericObject} instances is to use an \texttt{ObjectSchema}.
+The \texttt{ObjectSchema} for a particular object contains information
+about the slot-name mapping that is encapsulated in \texttt{Attribute} objects.\footnote{
+\texttt{Attribute} and \texttt{Accessor} are not limited to attributes that
+are stored in slots and accessible via \texttt{getSlotByName}.}
+
+\begin{itemize}
+\item The \texttt{getAttribute} method of \texttt{ObjectSchema} returns an attribute
+object for that name.
+\item \texttt{Attribute} has an \texttt{IAccessor} member named \texttt{accessor}
+which can be used to access a suitable object.
+\item The interface of \texttt{IAccessor} has a \texttt{get(Obj o)} method, which allows
+to retrieve the particular attribute value from an appropriate object, and
+a \texttt{put(Obj o, Val v)} method that allows the assign a new value to the attribute
+value of an appropriate object.
+\end{itemize}
+
+So, instead of
+\begin{verbatim}
+gobj.setSlotByName("A","new-value");
+\end{verbatim}
+\noindent we can also do something like
+\begin{verbatim}
+IAccessor<GenericMarkable,String> acc=
+     schema.getAttribute("A").accessor;
+
+for (GenericMarkable gobj: collection) {
+  acc.put(gobj,"new-value");
+}
+\end{verbatim}
+\noindent to benefit from increased efficiency when dealing with the
+same attribute on a large(r) number of objects.
 \end{document}
 
