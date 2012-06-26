@@ -16,6 +16,8 @@ public class ChildrenExample {
 	protected MarkableLevel<GenericMarkable> nodes;
 	protected IAccessor<GenericMarkable, List<NamedObject>> chldAcc;
 	protected IAccessor<GenericMarkable, String> node_cat;
+	protected IAccessor<GenericTerminal, String> word_pos;
+	protected IAccessor<GenericTerminal, String> word_form;
 
 	@SuppressWarnings("unchecked")
 	public ChildrenExample(Document<GenericTerminal> d) {
@@ -25,10 +27,14 @@ public class ChildrenExample {
 		nodes.<GenericMarkable>addToChildList("parent", chldAcc);
 		doc.addToChildList("parent", chldAcc);
 		nodes.sortChildList(chldAcc);
+		
+		node_cat=nodes.schema.<String>genericAccessor("cat");
+		word_pos=doc.terminalSchema().<String>genericAccessor("pos");
+		word_form=doc.terminalSchema().<String>genericAccessor("form");
 	}
 	
 	public void printNode(GenericMarkable node) {
-		System.out.format("(%s ",node.getSlotByName("cat"));
+		System.out.format("(%s ",node_cat.get(node));
 		for (NamedObject chld: chldAcc.get(node)) {
 			try {
 				GenericTerminal tn=(GenericTerminal)chld;
@@ -41,10 +47,7 @@ public class ChildrenExample {
 	}
 	
 	public void printTerminal(GenericTerminal tn) {
-		System.out.format("(%s %s)",
-				tn.getSlotByName("pos"),
-				//tn.getXMLId(),
-				tn.getSlotByName("form"));
+		System.out.format("(%s %s)", word_pos.get(tn), word_form.get(tn));
 	}
 
 	public void printTrees() {
