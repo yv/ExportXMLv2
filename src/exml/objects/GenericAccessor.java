@@ -17,6 +17,4 @@ public class GenericAccessor<Obj extends GenericObject,T>  implements IAccessor<
 	public void put(Obj o, T val) {
 		o.setSlot(_offset, val);
 	}
-	
-	
 }

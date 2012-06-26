@@ -41,6 +41,8 @@ public class GenericObject {
 			for (int i=0;i<_slots.length;i++) {
 				newslots[i]=_slots[i];
 			}
+			_slots=newslots;
+			_slots[idx]=val;
 		}
 	}
 

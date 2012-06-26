@@ -113,6 +113,7 @@ public class MarkableLevel<T extends GenericMarkable> {
 				(IAccessor<T, P>)schema.attrs.get(parentName).accessor;
 		for (T m: _markables) {
 			P parent=parentAcc.get(m);
+			if (parent==null) continue;
 			List<NamedObject> chlds=chldAcc.get(parent);
 			if (chlds == null) {
 				chlds=new ArrayList<NamedObject>();
@@ -124,9 +125,11 @@ public class MarkableLevel<T extends GenericMarkable> {
 	
 	/** sorts the child lists by position */
 	public void sortChildList(IAccessor<T,List<NamedObject>> chldAcc) {
+		//System.err.println("sortChildList on "+_markables.size()+" markables");
 		for (T m: _markables) {
 			List<NamedObject> chlds=chldAcc.get(m);
 			if (chlds == null) {
+				//System.err.println("empty child list on "+m.getXMLId());
 				chlds=new ArrayList<NamedObject>();
 				chldAcc.put(m,chlds);
 			}

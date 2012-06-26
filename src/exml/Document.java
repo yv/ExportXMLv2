@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import exml.objects.Attribute;
 import exml.objects.GenericObject;
 import exml.objects.GenericObjectFactory;
 import exml.objects.IAccessor;
@@ -315,6 +314,7 @@ public class Document<T extends GenericTerminal> {
 				(IAccessor<T, P>)_tschema.attrs.get(parentName).accessor;
 		for (T m: _terminals) {
 			P parent=parentAcc.get(m);
+			if (parent==null) continue;
 			List<NamedObject> chlds=chldAcc.get(parent);
 			if (chlds == null) {
 				chlds=new ArrayList<NamedObject>();

@@ -16,9 +16,13 @@ public class ObjectSchema<T extends GenericObject> {
 	public final Map<String, Relation<T,?>> rels=
 		new HashMap<String,Relation<T,?>>();
 	
-	public <V> void addAttribute(String name, IConverter<V> cvt) {
+	public <V> IAccessor<T,V> genericAccessor(String name) {
 		int idx=slotnames.lookupIndex(name);
-		attrs.put(name, new Attribute<T,V>(name, new GenericAccessor<T,V>(idx), cvt));
+		return new GenericAccessor<T,V>(idx);		
+	}
+	
+	public <V> void addAttribute(String name, IConverter<V> cvt) {
+		attrs.put(name, new Attribute<T,V>(name, this.<V>genericAccessor(name), cvt));
 	}
 	
 	public <T2,V> void addAttribute(String name, IConverter<V> cvt, IAccessor<T,V> avt) {
@@ -30,8 +34,7 @@ public class ObjectSchema<T extends GenericObject> {
 	}
 	
 	public <V extends GenericObject> void addRelation(String name, ObjectSchema<V> schema) {
-		int idx=slotnames.lookupIndex(name);
-		rels.put(name,new Relation<T,V>(name, new GenericAccessor<T,List<V>>(idx), schema));
+		rels.put(name,new Relation<T,V>(name, this.<List<V>>genericAccessor(name), schema));
 	}
 
 	public ObjectSchema(String name, GenericObjectFactory<T> factory) {
