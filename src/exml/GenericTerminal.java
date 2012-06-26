@@ -29,4 +29,10 @@ public class GenericTerminal extends NamedObject {
 		return _word;
 	}
 
+	public int getStart() {
+		return _corpus_pos;
+	}
+	public int getEnd() {
+		return _corpus_pos+1;
+	}
 }

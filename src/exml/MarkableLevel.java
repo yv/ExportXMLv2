@@ -2,12 +2,16 @@ package exml;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import exml.objects.Attribute;
+import exml.objects.GenericObject;
+import exml.objects.IAccessor;
+import exml.objects.NamedObject;
 import exml.objects.ObjectSchema;
 
 /**
@@ -98,5 +102,35 @@ public class MarkableLevel<T extends GenericMarkable> {
 			}
 		}
 		return result;
+	}
+	
+	/** adds all markables to their parent's child list */
+	public <P extends GenericObject> void addToChildList(
+			String parentName,
+			IAccessor<P,List<NamedObject>> chldAcc) {
+		@SuppressWarnings("unchecked")
+		IAccessor<T, P> parentAcc=
+				(IAccessor<T, P>)schema.attrs.get(parentName).accessor;
+		for (T m: _markables) {
+			P parent=parentAcc.get(m);
+			List<NamedObject> chlds=chldAcc.get(parent);
+			if (chlds == null) {
+				chlds=new ArrayList<NamedObject>();
+				chldAcc.put(parent,chlds);
+			}
+			chlds.add(m);
+		}
+	}
+	
+	/** sorts the child lists by position */
+	public void sortChildList(IAccessor<T,List<NamedObject>> chldAcc) {
+		for (T m: _markables) {
+			List<NamedObject> chlds=chldAcc.get(m);
+			if (chlds == null) {
+				chlds=new ArrayList<NamedObject>();
+				chldAcc.put(m,chlds);
+			}
+			Collections.sort(chlds,NamedObject.byPosition);
+		}
 	}
 }

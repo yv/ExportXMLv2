@@ -305,4 +305,34 @@ public class Document<T extends GenericTerminal> {
 		T terminal=(T)resolveObject(string);
 		return terminal.get_corpus_pos();
 	}
+	
+	/** adds all markables to their parent's child list */
+	public <P extends GenericObject> void addToChildList(
+			String parentName,
+			IAccessor<P,List<NamedObject>> chldAcc) {
+		@SuppressWarnings("unchecked")
+		IAccessor<T, P> parentAcc=
+				(IAccessor<T, P>)_tschema.attrs.get(parentName).accessor;
+		for (T m: _terminals) {
+			P parent=parentAcc.get(m);
+			List<NamedObject> chlds=chldAcc.get(parent);
+			if (chlds == null) {
+				chlds=new ArrayList<NamedObject>();
+				chldAcc.put(parent,chlds);
+			}
+			chlds.add(m);
+		}
+	}
+	
+	/** sorts the child lists by position */
+	public void sortChildList(IAccessor<T,List<NamedObject>> chldAcc) {
+		for (T m: _terminals) {
+			List<NamedObject> chlds=chldAcc.get(m);
+			if (chlds == null) {
+				chlds=new ArrayList<NamedObject>();
+				chldAcc.put(m,chlds);
+			}
+			Collections.sort(chlds,NamedObject.byPosition);
+		}
+	}
 }
