@@ -14,19 +14,19 @@ import exml.objects.NamedObject;
 public class ChildrenExample {
 	protected Document<GenericTerminal> doc;
 	protected MarkableLevel<GenericMarkable> nodes;
-	protected IAccessor<GenericMarkable, List<NamedObject>> chldAcc;
-	protected IAccessor<GenericMarkable, String> node_cat;
-	protected IAccessor<GenericTerminal, String> word_pos;
-	protected IAccessor<GenericTerminal, String> word_form;
+	public final IAccessor<GenericMarkable, List<NamedObject>> node_children;
+	public final IAccessor<GenericMarkable, String> node_cat;
+	public final IAccessor<GenericTerminal, String> word_pos;
+	public final IAccessor<GenericTerminal, String> word_form;
 
 	@SuppressWarnings("unchecked")
 	public ChildrenExample(Document<GenericTerminal> d) {
 		doc=d;
 		nodes=(MarkableLevel<GenericMarkable>) doc.markableLevelByName("node", false);
-		chldAcc=nodes.schema.<List<NamedObject>>genericAccessor("children");
-		nodes.<GenericMarkable>addToChildList("parent", chldAcc);
-		doc.addToChildList("parent", chldAcc);
-		nodes.sortChildList(chldAcc);
+		node_children=nodes.schema.<List<NamedObject>>genericAccessor("children");
+		nodes.<GenericMarkable>addToChildList("parent", node_children);
+		doc.addToChildList("parent", node_children);
+		nodes.sortChildList(node_children);
 		
 		node_cat=nodes.schema.<String>genericAccessor("cat");
 		word_pos=doc.terminalSchema().<String>genericAccessor("pos");
@@ -35,7 +35,7 @@ public class ChildrenExample {
 	
 	public void printNode(GenericMarkable node) {
 		System.out.format("(%s ",node_cat.get(node));
-		for (NamedObject chld: chldAcc.get(node)) {
+		for (NamedObject chld: node_children.get(node)) {
 			try {
 				GenericTerminal tn=(GenericTerminal)chld;
 				printTerminal(tn);
