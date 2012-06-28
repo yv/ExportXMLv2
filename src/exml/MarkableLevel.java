@@ -42,14 +42,30 @@ public class MarkableLevel<T extends GenericMarkable> {
 		T val=schema.createMarkable();
 		val.setStart(start);
 		val.setEnd(end);
-		for (Map.Entry<String, String> entry: attributes.entrySet()) {
-			Attribute<T, ?> att=schema.attrs.get(entry.getKey());
-			att.putString(val, entry.getValue(), doc);
+		if (attributes!=null) {
+			for (Map.Entry<String, String> entry: attributes.entrySet()) {
+				Attribute<T, ?> att=schema.attrs.get(entry.getKey());
+				att.putString(val, entry.getValue(), doc);
+			}
 		}
 		addMarkable(val);
 		return val;
 	}
 	
+	/**
+	 * adds a new markable with a contiguous span from <code>start</code> to <code>end</code>
+	 * @param attributes the attributes that the markable should have
+	 * @return the new markable
+	 * @throws MissingObjectException
+	 */
+	public T addMarkable(int start, int end) throws MissingObjectException {
+		T val=schema.createMarkable();
+		val.setStart(start);
+		val.setEnd(end);
+		addMarkable(val);
+		return val;
+	}
+
 	/**
 	 * adds an existing markable object to this markable level
 	 * @param val the markable
