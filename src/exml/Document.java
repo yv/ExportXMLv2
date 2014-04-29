@@ -57,6 +57,11 @@ public class Document<T extends GenericTerminal> {
 	
 	private final List<T> _terminals=new ArrayList<T>();
 	
+	public Document(ObjectSchema<T> schema, GenericObjectFactory<T> factory)
+	{
+		_tschema=schema;
+	}
+	
 	public Document(GenericObjectFactory<T> factory)
 	{
 		_tschema=new ObjectSchema<T>("word",factory);
@@ -232,6 +237,10 @@ public class Document<T extends GenericTerminal> {
 			new MarkableLevel(schema, this);
 		_levels_by_name.put(name, result);
 		return result;
+	}
+	
+	public void addMarkableLevel(MarkableLevel<?> level, String levelname) {
+		_levels_by_name.put(levelname, level);
 	}
 
 	/**

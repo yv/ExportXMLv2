@@ -10,7 +10,7 @@ public class ObjectSchema<T extends GenericObject> {
 	private final String _name;
 	private final GenericObjectFactory<T> _factory;
 
-	public final Alphabet<String> slotnames=new Alphabet<String>();
+	public final Alphabet<String> slotnames;
 	public final Map<String, Attribute<T,?>> attrs=
 		new HashMap<String,Attribute<T,?>>();
 	public final Map<String, Relation<T,?>> rels=
@@ -37,9 +37,14 @@ public class ObjectSchema<T extends GenericObject> {
 		rels.put(name,new Relation<T,V>(name, this.<List<V>>genericAccessor(name), schema));
 	}
 
-	public ObjectSchema(String name, GenericObjectFactory<T> factory) {
+	public ObjectSchema(String name, GenericObjectFactory<T> factory, Alphabet<String> xslotnames) {
 		_name=name;
 		_factory=factory;
+		slotnames=xslotnames;
+	}
+	
+	public ObjectSchema(String name, GenericObjectFactory<T> factory) {
+		this(name, factory, new Alphabet<String>());
 	}
 
 	public T createMarkable() {

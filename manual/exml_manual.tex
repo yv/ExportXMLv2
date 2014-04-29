@@ -254,5 +254,46 @@ for (GenericMarkable gobj: collection) {
 \end{verbatim}
 \noindent to benefit from increased efficiency when dealing with the
 same attribute on a large(r) number of objects.
+
+\chapter{Encoding TüBa-D/Z in a Schema}
+The ExportXMLv2 version of the TüBa-D/Z is encoded with a schema
+that aims for consistency with earlier approaches such as ExportXML
+and TuSNeLDa while incorporating all newer developments.
+
+Some annotations (dependencies, discourse structure) may or may not be part
+of the official released data.
+
+\section{Token annotations}
+Tokens correspond to the \texttt{word} tag, and have the following attributes:
+\begin{itemize}
+\item \texttt{form} the surface form
+\item \texttt{pos} the part-of-speech tag of the word
+\item \texttt{morph} the morphological tag
+\item \texttt{lemma} the lemma
+\item \texttt{func} the grammatical function of this terminal node (syntax)
+\item \texttt{parent} the parent node of this terminal node (syntax)
+\item \texttt{comment} a comment
+\item \texttt{dephead} a reference to the terminal that is the head of the
+  dependency annotation (dependencies)
+\item \texttt{deprel} the edge label of the dependency edge (dependencies)
+\end{itemize}
+
+Tokens can carry following edge tags:
+\begin{itemize}
+\item \texttt{secEdge} secondary edges in the syntax annotation (with a \texttt{cat} attribute describing
+the kind and a \texttt{parent} attribute containing the node/terminal pointed to)
+\item \texttt{relation} coreference relations (with a \texttt{type} attribute that specifies the
+exact kind and a \texttt{target} attribute that specifies the antecedent of the relation.
+\item \texttt{splitRelation} for anaphoric relations with multiple antecedents.
+\end{itemize}
+
+\section{Markables}
+\subsection{Syntax nodes: \texttt{node}}
+Nodes have the \texttt{func}, \texttt{parent} and \texttt{comment}
+attributes that terminals have, plus the following:
+\begin{itemize}
+\item 
+\end{itemize}
+\subsection{Named entity annotation: \texttt{ne}}
 \end{document}
 

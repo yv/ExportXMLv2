@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import exml.objects.IConverter;
-import gnu.trove.TIntArrayList;
+import gnu.trove.list.array.TIntArrayList;
 
 public class SpanConverter implements IConverter<TIntArrayList> {
 

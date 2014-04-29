@@ -1,7 +1,7 @@
 package exml;
 
 import exml.objects.IAccessor;
-import gnu.trove.TIntArrayList;
+import gnu.trove.list.array.TIntArrayList;
 
 public class SpanAccessor<T extends GenericMarkable> implements IAccessor<T,TIntArrayList>{
 
@@ -23,7 +23,7 @@ public class SpanAccessor<T extends GenericMarkable> implements IAccessor<T,TInt
 	public void put(GenericMarkable m, TIntArrayList parts) {
 		m.setStart(parts.get(0));
 		if (parts.size()>2) {
-			m.setHoles(parts.subList(1, parts.size()-2).toNativeArray());
+			m.setHoles(parts.subList(1, parts.size()-2).toArray());
 		} else {
 			m.setHoles(null);
 		}

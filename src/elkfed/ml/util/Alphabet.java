@@ -17,6 +17,8 @@
 
 package elkfed.ml.util;
 
+import gnu.trove.map.hash.TObjectIntHashMap;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -24,10 +26,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-
 import java.util.ArrayList;
-
-import gnu.trove.TObjectIntHashMap;
 
 /** A mapping between integers and objects where the mapping in each
  *  direction is efficient. The trick is given by (1) using an ArrayList

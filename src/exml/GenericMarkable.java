@@ -1,8 +1,6 @@
 package exml;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.regex.Pattern;
 
 import exml.objects.NamedObject;
 import exml.objects.ObjectSchema;
@@ -18,7 +16,7 @@ public class GenericMarkable extends NamedObject {
 	private int _end=-1;
 	private int[] _holes;
 
-	GenericMarkable(ObjectSchema<? extends GenericMarkable> schema) {
+	public GenericMarkable(ObjectSchema<? extends GenericMarkable> schema) {
 		super(schema);
 	}
 	
@@ -57,7 +55,7 @@ public class GenericMarkable extends NamedObject {
 	 * @param doc the Document 
 	 * @return a String of the words in this document separated by whitespace
 	 */
-	public String getWords(Document doc) {
+	public String getWords(Document<?> doc) {
 		StringBuffer concat = new StringBuffer();
 		for (int i= _start; i<_end; i++) {
 			concat.append(doc.getAttribute("word",i)+" ");
