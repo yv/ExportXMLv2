@@ -31,7 +31,7 @@ public class TuebaSecEdgeSchema extends ObjectSchema<TuebaSecEdgeEdge>
             super("secEdge",factory,global_alph);
             addAttribute("cat", new StringConverter(),
                          new GenericAccessor<TuebaSecEdgeEdge,String>(IDX_cat));
-            addAttribute("parent", new ReferenceConverter<NamedObject>(),
+            addAttribute("parent", new ReferenceConverter(),
                          new GenericAccessor<TuebaSecEdgeEdge,NamedObject>(IDX_parent));
         }
 

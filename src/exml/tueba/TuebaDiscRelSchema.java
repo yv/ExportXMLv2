@@ -34,7 +34,7 @@ public class TuebaDiscRelSchema extends ObjectSchema<TuebaDiscRelEdge>
                          new GenericAccessor<TuebaDiscRelEdge,String>(IDX_relation));
             addAttribute("marking", new StringConverter(),
                          new GenericAccessor<TuebaDiscRelEdge,String>(IDX_marking));
-            addAttribute("arg2", new ReferenceConverter<NamedObject>(),
+            addAttribute("arg2", new ReferenceConverter(),
                          new GenericAccessor<TuebaDiscRelEdge,NamedObject>(IDX_arg2));
         }
 

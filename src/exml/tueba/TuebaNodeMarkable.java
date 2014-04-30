@@ -46,4 +46,16 @@ public class TuebaNodeMarkable extends GenericMarkable {
     public void setChildren(List<NamedObject> val) {
         setSlot(TuebaNodeSchema.IDX_children, val);
     }
+    public List<TuebaSecEdgeEdge> getSecEdge() {
+      List<TuebaSecEdgeEdge> lst = (List<TuebaSecEdgeEdge>) getSlot(TuebaNodeSchema.IDX_secEdge);
+      return lst;
+    }
+    public List<TuebaRelationEdge> getRelation() {
+      List<TuebaRelationEdge> lst = (List<TuebaRelationEdge>) getSlot(TuebaNodeSchema.IDX_relation);
+      return lst;
+    }
+    public List<TuebaSplitRelationEdge> getSplitRelation() {
+      List<TuebaSplitRelationEdge> lst = (List<TuebaSplitRelationEdge>) getSlot(TuebaNodeSchema.IDX_splitRelation);
+      return lst;
+    }
 }

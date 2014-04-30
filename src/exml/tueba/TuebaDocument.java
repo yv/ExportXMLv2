@@ -4,7 +4,9 @@
 package exml.tueba;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -107,7 +109,9 @@ public class TuebaDocument extends Document<TuebaTerminal> {
         try {
             doc.readDocument(xmlFile);
         } catch (XMLStreamException ex) {
-            throw new RuntimeException("Cannot load document",ex);
+            throw new RuntimeException("Cannot load document", ex);
+        } catch (IOException ex) {
+        	throw new RuntimeException("Cannot load document", ex);
         }
         return doc;
 	}
@@ -122,8 +126,13 @@ public class TuebaDocument extends Document<TuebaTerminal> {
 	 * @throws XMLStreamException
 	 */
 	public void readDocument(String fileName) throws FileNotFoundException,
-			XMLStreamException {
-		DocumentReader.readDocument(this, new FileInputStream(fileName));
+			IOException, XMLStreamException {
+		if (fileName.endsWith(".gz")) {
+			DocumentReader.readDocument(this, new GZIPInputStream(
+					new FileInputStream(fileName)));
+		} else {
+			DocumentReader.readDocument(this, new FileInputStream(fileName));
+		}
 		nodes.<TuebaNodeMarkable> addToChildList("parent", node_children);
 		addToChildList("parent", node_children);
 		nodes.sortChildList(node_children);

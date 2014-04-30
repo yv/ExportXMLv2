@@ -206,6 +206,7 @@ public class Document<T extends GenericTerminal> {
 	public ObjectSchema<? extends GenericMarkable> markableSchemaByName(String name, boolean create) {
 		ObjectSchema<? extends GenericMarkable> schema=_schemas_by_name.get(name);
 		if (schema==null && create) {
+			System.err.println("Warning: Creating markable schema "+name+" on "+this.getClass());
 			schema=new ObjectSchema<GenericMarkable>(name,
 					new GenericObjectFactory<GenericMarkable>() {
 						public GenericMarkable createObject(ObjectSchema<GenericMarkable> sc) {
@@ -241,6 +242,10 @@ public class Document<T extends GenericTerminal> {
 	
 	public void addMarkableLevel(MarkableLevel<?> level, String levelname) {
 		_levels_by_name.put(levelname, level);
+		if (!_schemas_by_name.containsKey(level.schema.getName())) {
+			_schemas_by_name.put(level.schema.getName(),
+					level.schema);
+		}
 	}
 
 	/**
