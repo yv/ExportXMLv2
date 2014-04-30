@@ -4,9 +4,7 @@
 package exml.tueba;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -82,6 +80,10 @@ public class TuebaDocument extends Document<TuebaTerminal> {
         addMarkableLevel(edu_ranges, "edu-range");
 		node_children = nodes.schema
 				.<List<NamedObject>> genericAccessor("children");
+        addEdgeSchema("splitRelation", TuebaSplitRelationSchema.instance);
+        addEdgeSchema("secEdge", TuebaSecEdgeSchema.instance);
+        addEdgeSchema("relation", TuebaRelationSchema.instance);
+        addEdgeSchema("discRel", TuebaDiscRelSchema.instance);
         word_word = TuebaTerminalSchema.instance.<String> genericAccessor("form");
         word_cat = TuebaTerminalSchema.instance.<String> genericAccessor("pos");
         word_morph = TuebaTerminalSchema.instance.<String> genericAccessor("morph");
@@ -109,9 +111,7 @@ public class TuebaDocument extends Document<TuebaTerminal> {
         try {
             doc.readDocument(xmlFile);
         } catch (XMLStreamException ex) {
-            throw new RuntimeException("Cannot load document", ex);
-        } catch (IOException ex) {
-        	throw new RuntimeException("Cannot load document", ex);
+            throw new RuntimeException("Cannot load document",ex);
         }
         return doc;
 	}
@@ -126,13 +126,8 @@ public class TuebaDocument extends Document<TuebaTerminal> {
 	 * @throws XMLStreamException
 	 */
 	public void readDocument(String fileName) throws FileNotFoundException,
-			IOException, XMLStreamException {
-		if (fileName.endsWith(".gz")) {
-			DocumentReader.readDocument(this, new GZIPInputStream(
-					new FileInputStream(fileName)));
-		} else {
-			DocumentReader.readDocument(this, new FileInputStream(fileName));
-		}
+			XMLStreamException {
+		DocumentReader.readDocument(this, new FileInputStream(fileName));
 		nodes.<TuebaNodeMarkable> addToChildList("parent", node_children);
 		addToChildList("parent", node_children);
 		nodes.sortChildList(node_children);

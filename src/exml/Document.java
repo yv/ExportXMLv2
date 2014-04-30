@@ -271,6 +271,18 @@ public class Document<T extends GenericTerminal> {
 	}
 	
 	/**
+	 * adds a schema for one particular kind of edge
+	 * 
+	 * @see exml.objects.ObjectSchema
+	 * @param name the name of the edge definition
+	 * @param schema the actual schema
+	 */
+	public void addEdgeSchema(String name, ObjectSchema<? extends GenericObject> schema)
+	{
+		_edge_schemas_by_name.put(name, schema);
+	}
+	
+	/**
 	 * returns the definition of the terminal level
 	 * @return the schema object
 	 */
