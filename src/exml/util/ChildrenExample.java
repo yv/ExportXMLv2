@@ -11,6 +11,13 @@ import exml.io.DocumentReader;
 import exml.objects.IAccessor;
 import exml.objects.NamedObject;
 
+/** This is an example for the <i>generic</i> API
+ * of ExportXMLv2. It does things in a form that is less dependent
+ * on the actual annotation scheme of the corpus
+ * 
+ * @author yannick
+ */
+
 public class ChildrenExample {
 	protected Document<GenericTerminal> doc;
 	protected MarkableLevel<GenericMarkable> nodes;

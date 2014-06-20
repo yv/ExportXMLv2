@@ -1,5 +1,8 @@
 package exml.objects;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import exml.Document;
 import exml.MissingObjectException;
 import exml.ReferenceRestriction;
@@ -17,5 +20,13 @@ public class ReferenceConverter<T extends NamedObject> implements IConverter<T> 
 	@Override
 	public String convertToString(T obj, Document<?> doc) {
 		return doc.nameForObject(obj);
+	}
+
+	@Override
+	public void declareAttribute(String name, XMLStreamWriter writer)
+			throws XMLStreamException {
+		writer.writeStartElement("node-ref");
+		writer.writeAttribute("name", name);
+		writer.writeEndElement();
 	}
 }

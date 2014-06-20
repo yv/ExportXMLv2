@@ -20,8 +20,8 @@
 <ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
     <info
-        organisation="org.eml"
-        module="mmax2"
+        organisation="de.versley"
+        module="exportxml"
         status="integration">
         <configurations>
            <conf name="default" />
@@ -32,6 +32,7 @@
        <dependency org="org.codehaus.woodstox" name="stax2-api" rev="3.1.4" />
        <dependency org="com.google.guava" name="guava" rev="15.0" />
        <dependency org="net.sf.trove4j" name="trove4j" rev="3.0.3" />
+       <dependency org="org.apache.commons" name="commons-lang3" rev="3.3.2" />
     </dependencies>
  
 	</info>

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import exml.objects.GenericObject;
 import exml.objects.GenericObjectFactory;
@@ -124,7 +125,7 @@ public class Document<T extends GenericTerminal> {
 			 }
 		}
 		return terminalsWithRel;
-	}	
+	}
 	
 	/**
 	 * Returns the value of the input attribute of the nth token of the document.
@@ -203,6 +204,7 @@ public class Document<T extends GenericTerminal> {
 	 * @param create indicates that the markable level should be created if it does not exist yet
 	 * @return the markable level
 	 */
+	@SuppressWarnings("unchecked")
 	public ObjectSchema<? extends GenericMarkable> markableSchemaByName(String name, boolean create) {
 		ObjectSchema<? extends GenericMarkable> schema=_schemas_by_name.get(name);
 		if (schema==null && create) {
@@ -248,6 +250,14 @@ public class Document<T extends GenericTerminal> {
 		}
 	}
 
+	public Set<String> getMarkableLevelNames() {
+		return _levels_by_name.keySet();
+	}
+	
+	public Set<String> getEdgeNames() {
+		return _edge_schemas_by_name.keySet();
+	}
+	
 	/**
 	 * retrieves the schema for a given kind of edges
 	 * 

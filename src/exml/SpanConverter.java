@@ -1,7 +1,9 @@
 package exml;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import exml.objects.IConverter;
 import gnu.trove.list.array.TIntArrayList;
@@ -28,20 +30,30 @@ public class SpanConverter implements IConverter<TIntArrayList> {
 
 	@Override
 	public String convertToString(TIntArrayList obj, Document<?> doc) {
+		StringBuffer buf = new StringBuffer();
 		ArrayList<String> parts=new ArrayList<String>();
 		for (int i=0; i<obj.size();i+=2) {
 			int start=obj.get(i);
 			int end=obj.get(i+1);
+			if (i>0) {
+				buf.append(',');
+			}
 			if (start+1==end) {
-				parts.add(doc.nameForObject(doc.getTerminal(start)));
+				buf.append(doc.nameForObject(doc.getTerminal(start)));
 			} else {
-				parts.add(String.format("%s..%s",
+				buf.append(String.format("%s..%s",
 						doc.nameForObject(doc.getTerminal(start)),
 						doc.nameForObject(doc.getTerminal(end-1))));
 			}
 		}
-		return Arrays.toString(parts.toArray(new String[parts.size()]));
+		return buf.toString();
 	}
 	
 	static final public SpanConverter instance=new SpanConverter();
+
+	@Override
+	public void declareAttribute(String name, XMLStreamWriter writer)
+			throws XMLStreamException {
+		// the span attribute is always implied.
+	}
 }

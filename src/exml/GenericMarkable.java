@@ -79,9 +79,9 @@ public class GenericMarkable extends NamedObject {
 				return -1;
 			} else if (o1._start>o2._start) {
 				return +1;
-			} else if (o1._end<o2._end) {
-				return -1;
 			} else if (o1._end>o2._end) {
+				return -1;
+			} else if (o1._end<o2._end) {
 				return +1;
 			} else {
 				int id1=System.identityHashCode(o1);

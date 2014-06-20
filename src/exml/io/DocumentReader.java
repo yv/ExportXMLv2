@@ -21,6 +21,7 @@ import exml.GenericTerminal;
 import exml.MarkableLevel;
 import exml.MissingObjectException;
 import exml.objects.Attribute;
+import exml.objects.EnumConverter;
 import exml.objects.GenericObject;
 import exml.objects.NamedObject;
 import exml.objects.ObjectSchema;
@@ -38,22 +39,24 @@ public class DocumentReader {
 	protected Document<?> _doc;
 	protected XMLEventReader _reader;
 	protected boolean _inBody=false;
-	protected Stack<StackEntry<GenericMarkable>> _openTags =
-		new Stack<StackEntry<GenericMarkable>>();
-	protected List<StackEntry<GenericMarkable>> _to_add =
-		new ArrayList<StackEntry<GenericMarkable>>();
+	protected Stack<ReaderStackEntry<GenericMarkable>> _openTags =
+		new Stack<ReaderStackEntry<GenericMarkable>>();
+	protected List<ReaderStackEntry<GenericMarkable>> _to_add =
+		new ArrayList<ReaderStackEntry<GenericMarkable>>();
 	protected List<Fixup<?>> _fixups =
 		new ArrayList<Fixup<?>>();
 	private static final QName qname_name=QName.valueOf("name");
 	private static final QName qname_word=QName.valueOf("word");
 	private static final QName qname_form=QName.valueOf("form");
 	private static final QName qname_parent=QName.valueOf("parent");
+	private static final QName qname_descr=QName.valueOf("description");
 	// xml:id
-	private static final QName qname_xmlid=QName.valueOf("{http://www.w3.org/XML/1998/namespace}id");
+	public static final QName qname_xmlid=QName.valueOf("{http://www.w3.org/XML/1998/namespace}id");
 	
 	public void readAttributes(ObjectSchema<?> schema) throws XMLStreamException
 	{
 		int depth=1;
+		EnumConverter converter = null;
 		while (true) {
 			XMLEvent ev=_reader.nextTag();
 			if (ev.isStartElement()) {
@@ -63,9 +66,13 @@ public class DocumentReader {
 				if ("text-attr".equals(tagname)) {
 					schema.addAttribute(attname, StringConverter.instance);
 				} else if ("enum-attr".equals(tagname)) {
-					schema.addAttribute(attname, StringConverter.instance);
+					converter = new EnumConverter();
+					schema.addAttribute(attname, converter);
 				} else if ("node-ref".equals(tagname)) {
 					schema.addAttribute(attname, new ReferenceConverter<NamedObject>());
+				} else if ("val".equals(tagname)) {
+					String valdescr = elm.getAttributeByName(qname_descr).getValue();
+					converter.addVal(attname,valdescr);
 				}
 				depth++;
 			} else if (ev.isEndElement()) {
@@ -152,14 +159,14 @@ public class DocumentReader {
 							// read either close-tag for word or open tag for new edge
 							ev=_reader.nextTag();
 						} else {
-							throw new RuntimeException("Should close the word tag:"+ev);
+							throw new RuntimeException("Should close the word tag:"+ev+ev.asStartElement().getName());
 						}
 					}
 					continue;
 				}
 				// if the tag corresponds to a relation, put a new relation object
 				else if (_openTags.size()>0) {
-					StackEntry<? extends GenericMarkable> entry=_openTags.get(_openTags.size()-1);
+					ReaderStackEntry<? extends GenericMarkable> entry=_openTags.get(_openTags.size()-1);
 					Relation relSchema;
 					relSchema=entry.schema.rels.get(tagname);
 					if (relSchema!=null) {
@@ -183,7 +190,7 @@ public class DocumentReader {
 					new_m.setStart(_doc.size());
 					_doc.nameForObject(new_m);
 					setObjectAttributes(new_m,schema,elm);
-					_openTags.push(new StackEntry<GenericMarkable>((ObjectSchema<GenericMarkable>) schema, new_m));
+					_openTags.push(new ReaderStackEntry<GenericMarkable>((ObjectSchema<GenericMarkable>) schema, new_m));
 				}
 			} else if (ev.isEndElement()) {
 				EndElement elm=ev.asEndElement();
@@ -196,7 +203,7 @@ public class DocumentReader {
 					break;
 				}
 				// do something else
-				StackEntry entry=_openTags.pop();
+				ReaderStackEntry entry=_openTags.pop();
 				entry.value.setEnd(_doc.size());
 				_to_add.add(entry);
 			}
@@ -210,7 +217,7 @@ public class DocumentReader {
 			}
 		}
 		// register all objects in their markable layers
-		for (StackEntry entry: _to_add) {
+		for (ReaderStackEntry entry: _to_add) {
 			MarkableLevel mlvl=_doc.markableLevelByName(entry.schema.getName(),true);
 			mlvl.addMarkable(entry.value);
 		}
