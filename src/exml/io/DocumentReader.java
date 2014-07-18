@@ -20,6 +20,8 @@ import exml.GenericMarkable;
 import exml.GenericTerminal;
 import exml.MarkableLevel;
 import exml.MissingObjectException;
+import exml.SpanAccessor;
+import exml.SpanConverter;
 import exml.objects.Attribute;
 import exml.objects.EnumConverter;
 import exml.objects.GenericObject;
@@ -28,6 +30,7 @@ import exml.objects.ObjectSchema;
 import exml.objects.ReferenceConverter;
 import exml.objects.Relation;
 import exml.objects.StringConverter;
+import gnu.trove.list.array.TIntArrayList;
 
 
 /**
@@ -35,12 +38,12 @@ import exml.objects.StringConverter;
  * @author yannickv
  *
  */
-public class DocumentReader {
-	protected Document<?> _doc;
+public class DocumentReader<E extends GenericTerminal> {
+	protected Document<E> _doc;
 	protected XMLEventReader _reader;
 	protected boolean _inBody=false;
-	protected Stack<ReaderStackEntry<GenericMarkable>> _openTags =
-		new Stack<ReaderStackEntry<GenericMarkable>>();
+	protected Stack<ReaderStackEntry> _openTags =
+		new Stack<ReaderStackEntry>();
 	protected List<ReaderStackEntry<GenericMarkable>> _to_add =
 		new ArrayList<ReaderStackEntry<GenericMarkable>>();
 	protected List<Fixup<?>> _fixups =
@@ -119,6 +122,30 @@ public class DocumentReader {
 		}
 	}
 	
+	private final E make_terminal(StartElement elm)
+	{
+		String word_val=elm.getAttributeByName(qname_form).getValue();
+		E new_term=_doc.createTerminal(word_val);
+		javax.xml.stream.events.Attribute att=elm.getAttributeByName(qname_xmlid);
+		if (att!=null) {
+			new_term.setXMLId(att.getValue());
+			_doc.nameForObject(new_term);
+		}
+		setObjectAttributes(new_term,_doc.terminalSchema(),elm);
+		new_term.set_word(word_val);
+		return new_term;
+	}
+	
+	private final <M extends GenericMarkable> void push_markable(ObjectSchema<M> schema,StartElement elm)
+	{
+		M new_m=schema.createMarkable();
+		new_m.setXMLId(elm.getAttributeByName(qname_xmlid).getValue());
+		new_m.setStart(_doc.size());
+		_doc.nameForObject(new_m);
+		setObjectAttributes(new_m,schema,elm);
+		_openTags.push(new ReaderStackEntry<M>(schema, new_m));
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void readBody() throws XMLStreamException {
 		if (!_inBody) {
@@ -131,15 +158,7 @@ public class DocumentReader {
 				StartElement elm=ev.asStartElement();
 				String tagname=elm.getName().getLocalPart();
 				if ("word".equals(tagname)) {
-					String word_val=elm.getAttributeByName(qname_form).getValue();
-					GenericTerminal new_term=_doc.createTerminal(word_val);
-					javax.xml.stream.events.Attribute att=elm.getAttributeByName(qname_xmlid);
-					if (att!=null) {
-						new_term.setXMLId(att.getValue());
-						_doc.nameForObject(new_term);
-					}
-					setObjectAttributes(new_term,_doc.terminalSchema(),elm);
-					new_term.set_word(word_val);
+					GenericTerminal new_term = make_terminal(elm);
 					ev=_reader.nextTag();
 					while (!ev.isEndElement()) {
 						// terminals should not have embedded nodes, but may have edges
@@ -184,13 +203,8 @@ public class DocumentReader {
 				// if the tag corresponds to a level, create/register new markable
 				// and put on the stack
 				if (!is_a_rel) {
-					ObjectSchema<? extends GenericMarkable> schema=_doc.markableSchemaByName(tagname, true);
-					GenericMarkable new_m=schema.createMarkable();
-					new_m.setXMLId(elm.getAttributeByName(qname_xmlid).getValue());
-					new_m.setStart(_doc.size());
-					_doc.nameForObject(new_m);
-					setObjectAttributes(new_m,schema,elm);
-					_openTags.push(new ReaderStackEntry<GenericMarkable>((ObjectSchema<GenericMarkable>) schema, new_m));
+					ObjectSchema schema=_doc.markableSchemaByName(tagname, true);
+					push_markable(schema, elm);
 				}
 			} else if (ev.isEndElement()) {
 				EndElement elm=ev.asEndElement();
@@ -224,7 +238,7 @@ public class DocumentReader {
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected void setObjectAttributes(GenericObject newObj, ObjectSchema<?> objectSchema, StartElement elm) {
+	protected <E extends GenericObject> void setObjectAttributes(E newObj, ObjectSchema<E> objectSchema, StartElement elm) {
 		for (Iterator it=elm.getAttributes(); it.hasNext();) {
 			javax.xml.stream.events.Attribute att=(javax.xml.stream.events.Attribute)it.next();
 			if (att.getName().equals(qname_xmlid)) {
@@ -233,8 +247,11 @@ public class DocumentReader {
 			String att_name=att.getName().getLocalPart();
 			String att_val=att.getValue();
 			Attribute obj_attr=objectSchema.attrs.get(att_name);
+			if (obj_attr == null && "span".equals(att_name)) {
+				obj_attr = SpanAccessor.span_attribute;
+			}
 			if (obj_attr==null) {
-				System.err.println(att_name+"="+att_val+"/"+obj_attr);
+				System.err.println("No declared attribute:"+att_name+"="+att_val+"/"+obj_attr);
 				continue;
 			}
 			try {
@@ -252,7 +269,7 @@ public class DocumentReader {
 	 * @param reader the XML stream source
 	 * @throws XMLStreamException
 	 */
-	public DocumentReader(Document<?> d, XMLEventReader reader)
+	public DocumentReader(Document<E> d, XMLEventReader reader)
 	throws XMLStreamException
 	{
 		_doc=d;

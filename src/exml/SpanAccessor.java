@@ -1,11 +1,14 @@
 package exml;
 
+import exml.objects.Attribute;
 import exml.objects.IAccessor;
 import gnu.trove.list.array.TIntArrayList;
 
 public class SpanAccessor<T extends GenericMarkable> implements IAccessor<T,TIntArrayList>{
 
 	public static final SpanAccessor instance = new SpanAccessor();
+	public static final Attribute<GenericMarkable,TIntArrayList> span_attribute = 
+			new Attribute("span", instance, SpanConverter.instance);
 	
 	@Override
 	public TIntArrayList get(GenericMarkable m) {

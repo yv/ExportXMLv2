@@ -47,8 +47,8 @@ public class GenericMarkable extends NamedObject {
 	public int[] getHoles() {
 		return _holes;
 	}
-
 	
+
 	/**
 	 * concatenates the words in this Markable and returns them as one String 
 	 * (space-separated). 
