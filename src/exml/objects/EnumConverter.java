@@ -1,10 +1,12 @@
 package exml.objects;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+
+import exml.Document;
 
 public class EnumConverter extends StringConverter {
 	public static class EnumVal {
@@ -14,11 +16,24 @@ public class EnumConverter extends StringConverter {
 			name=n; description=d;
 		}
 	}
+	
+	public final HashMap<String,EnumVal> name_map=new HashMap<String,EnumVal>();
 	public final List<EnumVal> vals=new ArrayList<EnumVal>();
 	
 	public void addVal(String n, String d) {
-		EnumVal val = new EnumVal(n,d);
+		EnumVal val = new EnumVal(n.intern(),d);
 		vals.add(val);
+		name_map.put(n, val);
+	}
+	
+	@Override
+	public String convertFromString(String s, Document<?> doc) {
+		EnumVal val = name_map.get(s);
+		if (val == null) {
+			addVal(s, "???");
+			return s;
+		}
+		return val.name;
 	}
 	
 	@Override

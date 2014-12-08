@@ -75,11 +75,11 @@ public class TuebaTerminal extends GenericTerminal {
         setSlot(TuebaTerminalSchema.IDX_wsd_comment, val);
     }
     
-    public NamedObject getSyn_parent() {
-        return (NamedObject) getSlot(TuebaTerminalSchema.IDX_syn_parent);
+    public TuebaTerminal getSyn_parent() {
+        return (TuebaTerminal) getSlot(TuebaTerminalSchema.IDX_syn_parent);
     }
 
-    public void setSyn_parent(NamedObject val) {
+    public void setSyn_parent(TuebaTerminal val) {
         setSlot(TuebaTerminalSchema.IDX_syn_parent, val);
     }
     

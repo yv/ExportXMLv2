@@ -16,11 +16,11 @@ public class TuebaRelationEdge extends GenericObject {
     public void setType(String val) {
         setSlot(TuebaRelationSchema.IDX_type, val);
     }
-    public NamedObject getTarget() {
-        return (NamedObject) getSlot(TuebaRelationSchema.IDX_target);
+    public TuebaNodeInterface getTarget() {
+        return (TuebaNodeInterface) getSlot(TuebaRelationSchema.IDX_target);
     }
 
-    public void setTarget(NamedObject val) {
+    public void setTarget(TuebaNodeInterface val) {
         setSlot(TuebaRelationSchema.IDX_target, val);
     }
 }

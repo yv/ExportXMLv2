@@ -3,6 +3,7 @@
 
 package exml.tueba;
 import exml.GenericMarkable;
+import java.util.List;
 
 public class TuebaNEMarkable extends GenericMarkable {
     public TuebaNEMarkable() {

@@ -3,12 +3,12 @@
 
 package exml.tueba;
 import elkfed.ml.util.Alphabet;
-import exml.objects.GenericAccessor;
-import exml.objects.GenericObjectFactory;
-import exml.objects.NamedObject;
 import exml.objects.ObjectSchema;
-import exml.objects.ReferenceConverter;
+import exml.objects.NamedObject;
+import exml.objects.GenericObjectFactory;
 import exml.objects.StringConverter;
+import exml.objects.ReferenceConverter;
+import exml.objects.GenericAccessor;
 
 public class TuebaDiscRelSchema extends ObjectSchema<TuebaDiscRelEdge>
     {

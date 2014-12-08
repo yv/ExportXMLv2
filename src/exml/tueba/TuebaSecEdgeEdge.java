@@ -16,11 +16,11 @@ public class TuebaSecEdgeEdge extends GenericObject {
     public void setCat(String val) {
         setSlot(TuebaSecEdgeSchema.IDX_cat, val);
     }
-    public NamedObject getParent() {
-        return (NamedObject) getSlot(TuebaSecEdgeSchema.IDX_parent);
+    public TuebaNodeInterface getParent() {
+        return (TuebaNodeInterface) getSlot(TuebaSecEdgeSchema.IDX_parent);
     }
 
-    public void setParent(NamedObject val) {
+    public void setParent(TuebaNodeInterface val) {
         setSlot(TuebaSecEdgeSchema.IDX_parent, val);
     }
 }

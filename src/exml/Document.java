@@ -229,7 +229,7 @@ public class Document<T extends GenericTerminal> {
 	 * @param create indicates that the markable level should be created if it does not exist yet
 	 * @return the markable level
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public MarkableLevel<? extends GenericMarkable> markableLevelByName(String name, boolean create) {
 		if (_levels_by_name.containsKey(name)) {
 			return _levels_by_name.get(name);

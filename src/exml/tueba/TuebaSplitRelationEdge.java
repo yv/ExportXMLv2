@@ -3,6 +3,7 @@
 
 package exml.tueba;
 import exml.objects.GenericObject;
+import exml.objects.NamedObject;
 
 public class TuebaSplitRelationEdge extends GenericObject {
     public TuebaSplitRelationEdge() {

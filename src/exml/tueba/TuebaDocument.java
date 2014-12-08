@@ -47,7 +47,7 @@ public class TuebaDocument extends Document<TuebaTerminal> {
 	public final IAccessor<TuebaTerminal,TuebaNodeMarkable> word_parent;
 	public final IAccessor<TuebaTerminal,String> word_wsd_lexunits;
 	public final IAccessor<TuebaTerminal,String> word_wsd_comment;
-	public final IAccessor<TuebaTerminal,NamedObject> word_syn_parent;
+	public final IAccessor<TuebaTerminal,TuebaTerminal> word_syn_parent;
 	public final IAccessor<TuebaTerminal,String> word_syn_label;
 	public final IAccessor<TuebaTerminal,String> word_comment;
 
@@ -92,7 +92,7 @@ public class TuebaDocument extends Document<TuebaTerminal> {
         word_parent = TuebaTerminalSchema.instance.<TuebaNodeMarkable> genericAccessor("parent");
         word_wsd_lexunits = TuebaTerminalSchema.instance.<String> genericAccessor("wsd-lexunits");
         word_wsd_comment = TuebaTerminalSchema.instance.<String> genericAccessor("wsd-comment");
-        word_syn_parent = TuebaTerminalSchema.instance.<NamedObject> genericAccessor("dephead");
+        word_syn_parent = TuebaTerminalSchema.instance.<TuebaTerminal> genericAccessor("dephead");
         word_syn_label = TuebaTerminalSchema.instance.<String> genericAccessor("deprel");
         word_comment = TuebaTerminalSchema.instance.<String> genericAccessor("comment");
 	}
