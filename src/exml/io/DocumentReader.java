@@ -72,6 +72,7 @@ public class DocumentReader<E extends GenericTerminal> {
 					converter = new EnumConverter();
 					schema.addAttribute(attname, converter);
 				} else if ("node-ref".equals(tagname)) {
+					//TODO store up/down relationship
 					schema.addAttribute(attname, new ReferenceConverter<NamedObject>());
 				} else if ("val".equals(tagname)) {
 					String valdescr = elm.getAttributeByName(qname_descr).getValue();
@@ -96,6 +97,7 @@ public class DocumentReader<E extends GenericTerminal> {
 					// do stuff with terminal node
 					readAttributes(_doc.terminalSchema());
 				} else if ("node".equals(tagname)) {
+					//TODO store locality information
 					// do stuff with nonterminal node
 					readAttributes(_doc.markableSchemaByName(elm.getAttributeByName(qname_name).getValue(),
 							true));

@@ -60,6 +60,7 @@ public class DocumentWriter<T extends GenericTerminal> {
 			addEntries(levelName, allMarkables);
 		}
 		Collections.sort(allMarkables);
+		//TODO reorder according to up/down and locality relationships for allMarkables
 		_writer.writeStartElement("body");
 		int cur_idx = 0;
 		for (WriterStackEntry<? extends GenericMarkable> entry: allMarkables) {
