@@ -21,7 +21,6 @@ import exml.GenericTerminal;
 import exml.MarkableLevel;
 import exml.MissingObjectException;
 import exml.SpanAccessor;
-import exml.SpanConverter;
 import exml.objects.Attribute;
 import exml.objects.EnumConverter;
 import exml.objects.GenericObject;
@@ -30,7 +29,6 @@ import exml.objects.ObjectSchema;
 import exml.objects.ReferenceConverter;
 import exml.objects.Relation;
 import exml.objects.StringConverter;
-import gnu.trove.list.array.TIntArrayList;
 
 
 /**

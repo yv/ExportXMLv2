@@ -307,6 +307,7 @@ public class Document<T extends GenericTerminal> {
 	 */
 	public T createTerminal(String word) {
 		T term=_tschema.createMarkable();
+		term.set_word(word);
 		term.set_corpus_pos(_terminals.size());
 		_terminals.add(term);
 		return term;

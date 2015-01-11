@@ -1,5 +1,7 @@
-<project xmlns:ivy="antlib:org.apache.ivy.ant" name="bart" default="run">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="ExportXMLv2" default="dist">
+	<property name="version" value="1.0.1"/>
     <target name="resolve" description="--> retrieve dependencies with ivy">
+    	<ivy:settings file="ivysettings.xml"/>
         <ivy:retrieve pattern="lib/[artifact]-[revision]-[type].[ext]" />
         <ivy:cachepath pathid="ivy.path"/>
     </target>
@@ -8,11 +10,16 @@
         <mkdir dir="bin/"/>
         <mkdir dir="dist/"/>
     </target>
-    <target name="generate.pom" depends="init">
-        <ivy:deliver deliverpattern="dist/ivy.xml" pubrevision="2.0hd"/>
-        <ivy:makepom ivyfile="dist/ivy.xml" pomfile="dist/exportxml.pom" conf="default">
+	<target name="local-version">
+	  <tstamp>
+	  	<format property="now" pattern="yyyyMMddHHmmss"/>
+	  </tstamp>
+	</target>
+    <target name="generate.pom" depends="init,local-version">
+    	<ivy:info file="ivy.xml" />
+        <ivy:deliver deliverpattern="dist/ivy.xml" pubrevision="${version}"/>
+        <ivy:makepom ivyfile="dist/ivy.xml" pomfile="dist/exportxml.pom">
           <mapping conf="default" scope="compile"/>
-          <mapping conf="runtime" scope="runtime"/>
         </ivy:makepom> 
     </target>
     <target name="compile" depends="resolve,init">
@@ -27,6 +34,8 @@
     </target>
     <target name="publish.local" depends="dist,generate.pom" description="publish this project locally">
         <ivy:publish artifactspattern="dist/[artifact].[ext]" resolver="share-m2"
-            overwrite="true"/>
+        	pubrevision="${version}" pubdate="${now}" status="integration"
+                forcedeliver="true" overwrite="true">
+        </ivy:publish>
     </target>
 </project>

@@ -26,10 +26,14 @@
     <ivyauthor name="Yannick Versley" url="http://www.versley.de"/>
     <description>General library for handling ExportXMLv2 files</description>
    </info>
-   <!--        <configurations>
+    <configurations>
            <conf name="default" />
-           </configurations> -->
-       <dependencies>
+    </configurations>
+   <publications>
+       <artifact type="pom" ext="pom" conf="default"/>
+       <artifact type="jar" ext="jar" conf="default"/>
+    </publications>
+       <dependencies defaultconf="default">
        <dependency org="com.fasterxml" name="aalto-xml" rev="0.9.9" />
        <dependency org="org.codehaus.woodstox" name="stax2-api" rev="3.1.4" />
        <dependency org="com.google.guava" name="guava" rev="15.0" />

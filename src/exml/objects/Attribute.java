@@ -3,7 +3,7 @@ package exml.objects;
 import exml.Document;
 import exml.MissingObjectException;
 
-public final class Attribute<Obj,Val> {
+public final class Attribute<Obj,Val> implements IAttribute<Obj>{
 	public final String name;
 	public final IAccessor<Obj,Val> accessor;
 	public final IConverter<Val> converter;

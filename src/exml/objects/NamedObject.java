@@ -38,4 +38,11 @@ public abstract class NamedObject extends GenericObject {
 		}
 	}
 	public static final Comparator<NamedObject> byPosition=new ByPosition();
+	public String toString() {
+		if (_xmlid != null) {
+			return String.format("%s#%s", this.getClass().toString(), _xmlid);
+		} else {
+			return super.toString();
+		}
+	}
 }
