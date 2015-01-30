@@ -8,6 +8,7 @@ import exml.objects.NamedObject;
 import exml.objects.GenericObjectFactory;
 import exml.objects.StringConverter;
 import exml.objects.ReferenceConverter;
+import exml.objects.Attribute;
 import exml.objects.GenericAccessor;
 import exml.objects.IAccessor;
 
@@ -23,23 +24,27 @@ public class TuebaRelationSchema extends ObjectSchema<TuebaRelationEdge>
         }
         public static TuebaRelationFactory factory=new TuebaRelationFactory();
         public static final Alphabet<String> global_alph=new Alphabet<String>();
+        public static final Attribute<TuebaRelationEdge, String> ATTR_type = new Attribute<TuebaRelationEdge, String> ("type",
+                new IAccessor<TuebaRelationEdge, String>() {
+                    public String get(TuebaRelationEdge o) {
+                       return o.getType(); }
+                    public void put(TuebaRelationEdge o, String v) {
+                       o.setType(v); }},
+                new StringConverter());
+        public static final Attribute<TuebaRelationEdge, TuebaNodeInterface> ATTR_target = new Attribute<TuebaRelationEdge, TuebaNodeInterface> ("target",
+                new IAccessor<TuebaRelationEdge, TuebaNodeInterface>() {
+                    public TuebaNodeInterface get(TuebaRelationEdge o) {
+                       return o.getTarget(); }
+                    public void put(TuebaRelationEdge o, TuebaNodeInterface v) {
+                       o.setTarget(v); }},
+                new ReferenceConverter());
         public static final TuebaRelationSchema instance=new TuebaRelationSchema();
 
 
         public TuebaRelationSchema() {
             super("relation", TuebaRelationEdge.class,
                   factory, global_alph);
-            addAttribute("type", new StringConverter(),
-                new IAccessor<TuebaRelationEdge, String>() {
-                    public String get(TuebaRelationEdge o) {
-                       return o.getType(); }
-                    public void put(TuebaRelationEdge o, String v) {
-                       o.setType(v); }});
-            addAttribute("target", new ReferenceConverter(),
-                new IAccessor<TuebaRelationEdge, TuebaNodeInterface>() {
-                    public TuebaNodeInterface get(TuebaRelationEdge o) {
-                       return o.getTarget(); }
-                    public void put(TuebaRelationEdge o, TuebaNodeInterface v) {
-                       o.setTarget(v); }});
+            addAttribute(ATTR_type);
+            addAttribute(ATTR_target);
         }
 }

@@ -8,6 +8,7 @@ import exml.objects.NamedObject;
 import exml.objects.GenericObjectFactory;
 import exml.objects.StringConverter;
 import exml.objects.ReferenceConverter;
+import exml.objects.Attribute;
 import exml.objects.GenericAccessor;
 import exml.objects.IAccessor;
 
@@ -23,6 +24,34 @@ public class TuebaNodeSchema extends ObjectSchema<TuebaNodeMarkable>
         }
         public static TuebaNodeFactory factory=new TuebaNodeFactory();
         public static final Alphabet<String> global_alph=new Alphabet<String>();
+        public static final Attribute<TuebaNodeMarkable, String> ATTR_cat = new Attribute<TuebaNodeMarkable, String> ("cat",
+                new IAccessor<TuebaNodeMarkable, String>() {
+                    public String get(TuebaNodeMarkable o) {
+                       return o.getCat(); }
+                    public void put(TuebaNodeMarkable o, String v) {
+                       o.setCat(v); }},
+                new StringConverter());
+        public static final Attribute<TuebaNodeMarkable, String> ATTR_edge_label = new Attribute<TuebaNodeMarkable, String> ("func",
+                new IAccessor<TuebaNodeMarkable, String>() {
+                    public String get(TuebaNodeMarkable o) {
+                       return o.getEdge_label(); }
+                    public void put(TuebaNodeMarkable o, String v) {
+                       o.setEdge_label(v); }},
+                new StringConverter());
+        public static final Attribute<TuebaNodeMarkable, TuebaNodeMarkable> ATTR_parent = new Attribute<TuebaNodeMarkable, TuebaNodeMarkable> ("parent",
+                new IAccessor<TuebaNodeMarkable, TuebaNodeMarkable>() {
+                    public TuebaNodeMarkable get(TuebaNodeMarkable o) {
+                       return o.getParent(); }
+                    public void put(TuebaNodeMarkable o, TuebaNodeMarkable v) {
+                       o.setParent(v); }},
+                new ReferenceConverter());
+        public static final Attribute<TuebaNodeMarkable, String> ATTR_comment = new Attribute<TuebaNodeMarkable, String> ("comment",
+                new IAccessor<TuebaNodeMarkable, String>() {
+                    public String get(TuebaNodeMarkable o) {
+                       return o.getComment(); }
+                    public void put(TuebaNodeMarkable o, String v) {
+                       o.setComment(v); }},
+                new StringConverter());
         public static final int IDX_children=global_alph.lookupIndex("children");
         public static final int IDX_secEdge=global_alph.lookupIndex("secEdge");
         public static final int IDX_relation=global_alph.lookupIndex("relation");
@@ -33,30 +62,10 @@ public class TuebaNodeSchema extends ObjectSchema<TuebaNodeMarkable>
         public TuebaNodeSchema() {
             super("node", TuebaNodeMarkable.class,
                   factory, global_alph);
-            addAttribute("cat", new StringConverter(),
-                new IAccessor<TuebaNodeMarkable, String>() {
-                    public String get(TuebaNodeMarkable o) {
-                       return o.getCat(); }
-                    public void put(TuebaNodeMarkable o, String v) {
-                       o.setCat(v); }});
-            addAttribute("func", new StringConverter(),
-                new IAccessor<TuebaNodeMarkable, String>() {
-                    public String get(TuebaNodeMarkable o) {
-                       return o.getEdge_label(); }
-                    public void put(TuebaNodeMarkable o, String v) {
-                       o.setEdge_label(v); }});
-            addAttribute("parent", new ReferenceConverter(),
-                new IAccessor<TuebaNodeMarkable, TuebaNodeMarkable>() {
-                    public TuebaNodeMarkable get(TuebaNodeMarkable o) {
-                       return o.getParent(); }
-                    public void put(TuebaNodeMarkable o, TuebaNodeMarkable v) {
-                       o.setParent(v); }});
-            addAttribute("comment", new StringConverter(),
-                new IAccessor<TuebaNodeMarkable, String>() {
-                    public String get(TuebaNodeMarkable o) {
-                       return o.getComment(); }
-                    public void put(TuebaNodeMarkable o, String v) {
-                       o.setComment(v); }});
+            addAttribute(ATTR_cat);
+            addAttribute(ATTR_edge_label);
+            addAttribute(ATTR_parent);
+            addAttribute(ATTR_comment);
             addRelation("secEdge", TuebaSecEdgeSchema.instance);
             addRelation("relation", TuebaRelationSchema.instance);
             addRelation("splitRelation", TuebaSplitRelationSchema.instance);

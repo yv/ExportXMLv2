@@ -8,6 +8,7 @@ import exml.objects.NamedObject;
 import exml.objects.GenericObjectFactory;
 import exml.objects.StringConverter;
 import exml.objects.ReferenceConverter;
+import exml.objects.Attribute;
 import exml.objects.GenericAccessor;
 import exml.objects.IAccessor;
 
@@ -23,17 +24,19 @@ public class TuebaNESchema extends ObjectSchema<TuebaNEMarkable>
         }
         public static TuebaNEFactory factory=new TuebaNEFactory();
         public static final Alphabet<String> global_alph=new Alphabet<String>();
+        public static final Attribute<TuebaNEMarkable, String> ATTR_kind = new Attribute<TuebaNEMarkable, String> ("type",
+                new IAccessor<TuebaNEMarkable, String>() {
+                    public String get(TuebaNEMarkable o) {
+                       return o.getKind(); }
+                    public void put(TuebaNEMarkable o, String v) {
+                       o.setKind(v); }},
+                new StringConverter());
         public static final TuebaNESchema instance=new TuebaNESchema();
 
 
         public TuebaNESchema() {
             super("ne", TuebaNEMarkable.class,
                   factory, global_alph);
-            addAttribute("type", new StringConverter(),
-                new IAccessor<TuebaNEMarkable, String>() {
-                    public String get(TuebaNEMarkable o) {
-                       return o.getKind(); }
-                    public void put(TuebaNEMarkable o, String v) {
-                       o.setKind(v); }});
+            addAttribute(ATTR_kind);
         }
 }

@@ -10,6 +10,7 @@ import exml.objects.StringConverter;
 import exml.objects.ReferenceConverter;
 import exml.objects.IAccessor;
 import exml.objects.GenericAccessor;
+import exml.objects.Attribute;
 
 public class TuebaTerminalSchema extends ObjectSchema<TuebaTerminal>
 {
@@ -26,78 +27,100 @@ public class TuebaTerminalSchema extends ObjectSchema<TuebaTerminal>
         public static final Alphabet<String> global_alph=new Alphabet<String>();
 
         public static final TuebaTerminalSchema instance=new TuebaTerminalSchema();
+        public static final Attribute<TuebaTerminal, String> ATTR_word = new Attribute<TuebaTerminal, String> ("form",
+                new IAccessor<TuebaTerminal, String>() {
+                    public String get(TuebaTerminal o) {
+                       return o.getWord(); }
+                    public void put(TuebaTerminal o, String v) {
+                       o.setWord(v); }},
+                new StringConverter());
+        public static final Attribute<TuebaTerminal, String> ATTR_cat = new Attribute<TuebaTerminal, String> ("pos",
+                new IAccessor<TuebaTerminal, String>() {
+                    public String get(TuebaTerminal o) {
+                       return o.getCat(); }
+                    public void put(TuebaTerminal o, String v) {
+                       o.setCat(v); }},
+                new StringConverter());
+        public static final Attribute<TuebaTerminal, String> ATTR_morph = new Attribute<TuebaTerminal, String> ("morph",
+                new IAccessor<TuebaTerminal, String>() {
+                    public String get(TuebaTerminal o) {
+                       return o.getMorph(); }
+                    public void put(TuebaTerminal o, String v) {
+                       o.setMorph(v); }},
+                new StringConverter());
+        public static final Attribute<TuebaTerminal, String> ATTR_lemma = new Attribute<TuebaTerminal, String> ("lemma",
+                new IAccessor<TuebaTerminal, String>() {
+                    public String get(TuebaTerminal o) {
+                       return o.getLemma(); }
+                    public void put(TuebaTerminal o, String v) {
+                       o.setLemma(v); }},
+                new StringConverter());
+        public static final Attribute<TuebaTerminal, String> ATTR_edge_label = new Attribute<TuebaTerminal, String> ("func",
+                new IAccessor<TuebaTerminal, String>() {
+                    public String get(TuebaTerminal o) {
+                       return o.getEdge_label(); }
+                    public void put(TuebaTerminal o, String v) {
+                       o.setEdge_label(v); }},
+                new StringConverter());
+        public static final Attribute<TuebaTerminal, TuebaNodeMarkable> ATTR_parent = new Attribute<TuebaTerminal, TuebaNodeMarkable> ("parent",
+                new IAccessor<TuebaTerminal, TuebaNodeMarkable>() {
+                    public TuebaNodeMarkable get(TuebaTerminal o) {
+                       return o.getParent(); }
+                    public void put(TuebaTerminal o, TuebaNodeMarkable v) {
+                       o.setParent(v); }},
+                new ReferenceConverter());
+        public static final Attribute<TuebaTerminal, String> ATTR_wsd_lexunits = new Attribute<TuebaTerminal, String> ("wsd-lexunits",
+                new IAccessor<TuebaTerminal, String>() {
+                    public String get(TuebaTerminal o) {
+                       return o.getWsd_lexunits(); }
+                    public void put(TuebaTerminal o, String v) {
+                       o.setWsd_lexunits(v); }},
+                new StringConverter());
+        public static final Attribute<TuebaTerminal, String> ATTR_wsd_comment = new Attribute<TuebaTerminal, String> ("wsd-comment",
+                new IAccessor<TuebaTerminal, String>() {
+                    public String get(TuebaTerminal o) {
+                       return o.getWsd_comment(); }
+                    public void put(TuebaTerminal o, String v) {
+                       o.setWsd_comment(v); }},
+                new StringConverter());
+        public static final Attribute<TuebaTerminal, TuebaTerminal> ATTR_syn_parent = new Attribute<TuebaTerminal, TuebaTerminal> ("dephead",
+                new IAccessor<TuebaTerminal, TuebaTerminal>() {
+                    public TuebaTerminal get(TuebaTerminal o) {
+                       return o.getSyn_parent(); }
+                    public void put(TuebaTerminal o, TuebaTerminal v) {
+                       o.setSyn_parent(v); }},
+                new ReferenceConverter());
+        public static final Attribute<TuebaTerminal, String> ATTR_syn_label = new Attribute<TuebaTerminal, String> ("deprel",
+                new IAccessor<TuebaTerminal, String>() {
+                    public String get(TuebaTerminal o) {
+                       return o.getSyn_label(); }
+                    public void put(TuebaTerminal o, String v) {
+                       o.setSyn_label(v); }},
+                new StringConverter());
+        public static final Attribute<TuebaTerminal, String> ATTR_comment = new Attribute<TuebaTerminal, String> ("comment",
+                new IAccessor<TuebaTerminal, String>() {
+                    public String get(TuebaTerminal o) {
+                       return o.getComment(); }
+                    public void put(TuebaTerminal o, String v) {
+                       o.setComment(v); }},
+                new StringConverter());
         public static final int IDX_secEdge=global_alph.lookupIndex("secEdge");
         public static final int IDX_relation=global_alph.lookupIndex("relation");
         public static final int IDX_splitRelation=global_alph.lookupIndex("splitRelation");
         public static final int IDX_connective=global_alph.lookupIndex("connective");
         public TuebaTerminalSchema() {
             super("word",TuebaTerminal.class,factory,global_alph);
-            addAttribute("form", new StringConverter(),
-                new IAccessor<TuebaTerminal, String>() {
-                    public String get(TuebaTerminal o) {
-                       return o.getWord(); }
-                    public void put(TuebaTerminal o, String v) {
-                       o.setWord(v); }});
-            addAttribute("pos", new StringConverter(),
-                new IAccessor<TuebaTerminal, String>() {
-                    public String get(TuebaTerminal o) {
-                       return o.getCat(); }
-                    public void put(TuebaTerminal o, String v) {
-                       o.setCat(v); }});
-            addAttribute("morph", new StringConverter(),
-                new IAccessor<TuebaTerminal, String>() {
-                    public String get(TuebaTerminal o) {
-                       return o.getMorph(); }
-                    public void put(TuebaTerminal o, String v) {
-                       o.setMorph(v); }});
-            addAttribute("lemma", new StringConverter(),
-                new IAccessor<TuebaTerminal, String>() {
-                    public String get(TuebaTerminal o) {
-                       return o.getLemma(); }
-                    public void put(TuebaTerminal o, String v) {
-                       o.setLemma(v); }});
-            addAttribute("func", new StringConverter(),
-                new IAccessor<TuebaTerminal, String>() {
-                    public String get(TuebaTerminal o) {
-                       return o.getEdge_label(); }
-                    public void put(TuebaTerminal o, String v) {
-                       o.setEdge_label(v); }});
-            addAttribute("parent", new ReferenceConverter(),
-                new IAccessor<TuebaTerminal, TuebaNodeMarkable>() {
-                    public TuebaNodeMarkable get(TuebaTerminal o) {
-                       return o.getParent(); }
-                    public void put(TuebaTerminal o, TuebaNodeMarkable v) {
-                       o.setParent(v); }});
-            addAttribute("wsd-lexunits", new StringConverter(),
-                new IAccessor<TuebaTerminal, String>() {
-                    public String get(TuebaTerminal o) {
-                       return o.getWsd_lexunits(); }
-                    public void put(TuebaTerminal o, String v) {
-                       o.setWsd_lexunits(v); }});
-            addAttribute("wsd-comment", new StringConverter(),
-                new IAccessor<TuebaTerminal, String>() {
-                    public String get(TuebaTerminal o) {
-                       return o.getWsd_comment(); }
-                    public void put(TuebaTerminal o, String v) {
-                       o.setWsd_comment(v); }});
-            addAttribute("dephead", new ReferenceConverter(),
-                new IAccessor<TuebaTerminal, TuebaTerminal>() {
-                    public TuebaTerminal get(TuebaTerminal o) {
-                       return o.getSyn_parent(); }
-                    public void put(TuebaTerminal o, TuebaTerminal v) {
-                       o.setSyn_parent(v); }});
-            addAttribute("deprel", new StringConverter(),
-                new IAccessor<TuebaTerminal, String>() {
-                    public String get(TuebaTerminal o) {
-                       return o.getSyn_label(); }
-                    public void put(TuebaTerminal o, String v) {
-                       o.setSyn_label(v); }});
-            addAttribute("comment", new StringConverter(),
-                new IAccessor<TuebaTerminal, String>() {
-                    public String get(TuebaTerminal o) {
-                       return o.getComment(); }
-                    public void put(TuebaTerminal o, String v) {
-                       o.setComment(v); }});
+            addAttribute(ATTR_word);
+            addAttribute(ATTR_cat);
+            addAttribute(ATTR_morph);
+            addAttribute(ATTR_lemma);
+            addAttribute(ATTR_edge_label);
+            addAttribute(ATTR_parent);
+            addAttribute(ATTR_wsd_lexunits);
+            addAttribute(ATTR_wsd_comment);
+            addAttribute(ATTR_syn_parent);
+            addAttribute(ATTR_syn_label);
+            addAttribute(ATTR_comment);
             addRelation("secEdge", TuebaSecEdgeSchema.instance);
             addRelation("relation", TuebaRelationSchema.instance);
             addRelation("splitRelation", TuebaSplitRelationSchema.instance);

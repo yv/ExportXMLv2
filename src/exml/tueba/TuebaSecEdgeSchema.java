@@ -8,6 +8,7 @@ import exml.objects.NamedObject;
 import exml.objects.GenericObjectFactory;
 import exml.objects.StringConverter;
 import exml.objects.ReferenceConverter;
+import exml.objects.Attribute;
 import exml.objects.GenericAccessor;
 import exml.objects.IAccessor;
 
@@ -23,23 +24,27 @@ public class TuebaSecEdgeSchema extends ObjectSchema<TuebaSecEdgeEdge>
         }
         public static TuebaSecEdgeFactory factory=new TuebaSecEdgeFactory();
         public static final Alphabet<String> global_alph=new Alphabet<String>();
+        public static final Attribute<TuebaSecEdgeEdge, String> ATTR_cat = new Attribute<TuebaSecEdgeEdge, String> ("cat",
+                new IAccessor<TuebaSecEdgeEdge, String>() {
+                    public String get(TuebaSecEdgeEdge o) {
+                       return o.getCat(); }
+                    public void put(TuebaSecEdgeEdge o, String v) {
+                       o.setCat(v); }},
+                new StringConverter());
+        public static final Attribute<TuebaSecEdgeEdge, TuebaNodeInterface> ATTR_parent = new Attribute<TuebaSecEdgeEdge, TuebaNodeInterface> ("parent",
+                new IAccessor<TuebaSecEdgeEdge, TuebaNodeInterface>() {
+                    public TuebaNodeInterface get(TuebaSecEdgeEdge o) {
+                       return o.getParent(); }
+                    public void put(TuebaSecEdgeEdge o, TuebaNodeInterface v) {
+                       o.setParent(v); }},
+                new ReferenceConverter());
         public static final TuebaSecEdgeSchema instance=new TuebaSecEdgeSchema();
 
 
         public TuebaSecEdgeSchema() {
             super("secEdge", TuebaSecEdgeEdge.class,
                   factory, global_alph);
-            addAttribute("cat", new StringConverter(),
-                new IAccessor<TuebaSecEdgeEdge, String>() {
-                    public String get(TuebaSecEdgeEdge o) {
-                       return o.getCat(); }
-                    public void put(TuebaSecEdgeEdge o, String v) {
-                       o.setCat(v); }});
-            addAttribute("parent", new ReferenceConverter(),
-                new IAccessor<TuebaSecEdgeEdge, TuebaNodeInterface>() {
-                    public TuebaNodeInterface get(TuebaSecEdgeEdge o) {
-                       return o.getParent(); }
-                    public void put(TuebaSecEdgeEdge o, TuebaNodeInterface v) {
-                       o.setParent(v); }});
+            addAttribute(ATTR_cat);
+            addAttribute(ATTR_parent);
         }
 }

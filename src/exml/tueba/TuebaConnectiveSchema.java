@@ -8,6 +8,7 @@ import exml.objects.NamedObject;
 import exml.objects.GenericObjectFactory;
 import exml.objects.StringConverter;
 import exml.objects.ReferenceConverter;
+import exml.objects.Attribute;
 import exml.objects.GenericAccessor;
 import exml.objects.IAccessor;
 
@@ -23,29 +24,35 @@ public class TuebaConnectiveSchema extends ObjectSchema<TuebaConnectiveEdge>
         }
         public static TuebaConnectiveFactory factory=new TuebaConnectiveFactory();
         public static final Alphabet<String> global_alph=new Alphabet<String>();
+        public static final Attribute<TuebaConnectiveEdge, String> ATTR_konn = new Attribute<TuebaConnectiveEdge, String> ("konn",
+                new IAccessor<TuebaConnectiveEdge, String>() {
+                    public String get(TuebaConnectiveEdge o) {
+                       return o.getKonn(); }
+                    public void put(TuebaConnectiveEdge o, String v) {
+                       o.setKonn(v); }},
+                new StringConverter());
+        public static final Attribute<TuebaConnectiveEdge, String> ATTR_rel1 = new Attribute<TuebaConnectiveEdge, String> ("rel1",
+                new IAccessor<TuebaConnectiveEdge, String>() {
+                    public String get(TuebaConnectiveEdge o) {
+                       return o.getRel1(); }
+                    public void put(TuebaConnectiveEdge o, String v) {
+                       o.setRel1(v); }},
+                new StringConverter());
+        public static final Attribute<TuebaConnectiveEdge, String> ATTR_rel2 = new Attribute<TuebaConnectiveEdge, String> ("rel2",
+                new IAccessor<TuebaConnectiveEdge, String>() {
+                    public String get(TuebaConnectiveEdge o) {
+                       return o.getRel2(); }
+                    public void put(TuebaConnectiveEdge o, String v) {
+                       o.setRel2(v); }},
+                new StringConverter());
         public static final TuebaConnectiveSchema instance=new TuebaConnectiveSchema();
 
 
         public TuebaConnectiveSchema() {
             super("connective", TuebaConnectiveEdge.class,
                   factory, global_alph);
-            addAttribute("konn", new StringConverter(),
-                new IAccessor<TuebaConnectiveEdge, String>() {
-                    public String get(TuebaConnectiveEdge o) {
-                       return o.getKonn(); }
-                    public void put(TuebaConnectiveEdge o, String v) {
-                       o.setKonn(v); }});
-            addAttribute("rel1", new StringConverter(),
-                new IAccessor<TuebaConnectiveEdge, String>() {
-                    public String get(TuebaConnectiveEdge o) {
-                       return o.getRel1(); }
-                    public void put(TuebaConnectiveEdge o, String v) {
-                       o.setRel1(v); }});
-            addAttribute("rel2", new StringConverter(),
-                new IAccessor<TuebaConnectiveEdge, String>() {
-                    public String get(TuebaConnectiveEdge o) {
-                       return o.getRel2(); }
-                    public void put(TuebaConnectiveEdge o, String v) {
-                       o.setRel2(v); }});
+            addAttribute(ATTR_konn);
+            addAttribute(ATTR_rel1);
+            addAttribute(ATTR_rel2);
         }
 }
