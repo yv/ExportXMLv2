@@ -73,7 +73,7 @@ public class DocumentWriter<T extends GenericTerminal> {
 				while (!_openTags.isEmpty() &&
 						_openTags.peek().cutAt <= cur_idx) {
 					_openTags.pop();
-					_writer.writeCharacters(SPACES.substring(0, 2*_openTags.size()));
+					writeIndent(0);
 					_writer.writeEndElement();
 					_writer.writeCharacters("\n");
 				}
@@ -95,17 +95,26 @@ public class DocumentWriter<T extends GenericTerminal> {
 			while (!_openTags.isEmpty() &&
 					_openTags.peek().cutAt <= cur_idx) {
 				_openTags.pop();
-				_writer.writeCharacters(SPACES.substring(0, 2*_openTags.size()));
+				writeIndent(0);
 				_writer.writeEndElement();
 				_writer.writeCharacters("\n");
 			}
 		}
 	}
+	
+	private void writeIndent(int offset) throws XMLStreamException {
+		int spacesWanted = 2*_openTags.size()+offset;
+		while (spacesWanted > SPACES.length()) {
+			_writer.writeCharacters(SPACES);
+			spacesWanted -= SPACES.length();
+		}
+		_writer.writeCharacters(SPACES.substring(0, spacesWanted));
+	}
 
 	@SuppressWarnings("unchecked")
 	public void writeTerminal(ObjectSchema<T> tschema, T tn)
 			throws XMLStreamException {
-		_writer.writeCharacters(SPACES.substring(0, 2*_openTags.size()));
+		writeIndent(0);
 		_writer.writeStartElement("word");
 		_writer.writeAttribute("xml","http://www.w3.org/XML/1998/namespace", "id", tn.getXMLId());
 		for (String key: (Set<String>)tschema.attrs.keySet()) {
@@ -127,7 +136,7 @@ public class DocumentWriter<T extends GenericTerminal> {
 	public <E extends NamedObject, Obj extends GenericObject>
 	   void writeRelation(E obj, Relation<E,Obj> rel) throws XMLStreamException {
 			for (Obj edge: rel.get_relation(obj)) {
-				_writer.writeCharacters(SPACES.substring(0, 2*_openTags.size()));
+				writeIndent(0);
 				_writer.writeStartElement(rel.name);
 				for (String key: (Set<String>)rel.schema.attrs.keySet()) {
 					@SuppressWarnings("rawtypes")
@@ -149,7 +158,7 @@ public class DocumentWriter<T extends GenericTerminal> {
 	{
 		ObjectSchema<M> schema=entry.schema;
 		M m=entry.value;
-		_writer.writeCharacters(SPACES.substring(0, 2*_openTags.size()));
+		writeIndent(0);
 		_writer.writeStartElement(schema.getName());
 		_writer.writeAttribute("xml","http://www.w3.org/XML/1998/namespace", "id", m.getXMLId());
 		for (String key: (Set<String>)schema.attrs.keySet()) {

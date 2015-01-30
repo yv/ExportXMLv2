@@ -3,18 +3,24 @@
 
 package exml.tueba;
 import exml.GenericMarkable;
+import exml.annotations.Attribute;
+import exml.annotations.MarkableSchema;
 import java.util.List;
 
-public class TuebaTopicMarkable extends GenericMarkable {
+@MarkableSchema(TuebaTopicSchema.class)
+public class TuebaTopicMarkable extends GenericMarkable
+{
     public TuebaTopicMarkable() {
         super(TuebaTopicSchema.instance);
     }
+    private String _description;
+    @Attribute("description")
     public String getDescription() {
-        return (String) getSlot(TuebaTopicSchema.IDX_description);
+        return _description;
     }
 
     public void setDescription(String val) {
-        setSlot(TuebaTopicSchema.IDX_description, val);
+       _description = val;
     }
     public List<TuebaDiscRelEdge> getDiscRel() {
       List<TuebaDiscRelEdge> lst = (List<TuebaDiscRelEdge>) getSlot(TuebaTopicSchema.IDX_discRel);

@@ -43,7 +43,7 @@ public class CheckChildren {
 			try {
 				TuebaTerminal tn=(TuebaTerminal)chld;
 				checkTerminal(tn);
-				chld_descr = String.format("[%s_%s]", tn.get_word(), tn.getCat());
+				chld_descr = String.format("[%s_%s]", tn.getWord(), tn.getCat());
 			} catch (ClassCastException ex) {
 				TuebaNodeMarkable nt = (TuebaNodeMarkable)chld;
 				checkNode(nt);

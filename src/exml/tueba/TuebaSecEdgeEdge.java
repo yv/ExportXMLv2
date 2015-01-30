@@ -4,23 +4,27 @@
 package exml.tueba;
 import exml.objects.GenericObject;
 import exml.objects.NamedObject;
+import exml.annotations.MarkableSchema;
 
+@MarkableSchema(TuebaSecEdgeSchema.class)
 public class TuebaSecEdgeEdge extends GenericObject {
     public TuebaSecEdgeEdge() {
         super(TuebaSecEdgeSchema.instance.slotnames);
     }
+    private String _cat;
+    private TuebaNodeInterface _parent;
     public String getCat() {
-        return (String) getSlot(TuebaSecEdgeSchema.IDX_cat);
+        return _cat;
     }
 
     public void setCat(String val) {
-        setSlot(TuebaSecEdgeSchema.IDX_cat, val);
+        _cat = val;
     }
     public TuebaNodeInterface getParent() {
-        return (TuebaNodeInterface) getSlot(TuebaSecEdgeSchema.IDX_parent);
+        return _parent;
     }
 
     public void setParent(TuebaNodeInterface val) {
-        setSlot(TuebaSecEdgeSchema.IDX_parent, val);
+        _parent = val;
     }
 }

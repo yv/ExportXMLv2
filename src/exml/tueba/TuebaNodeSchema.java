@@ -9,6 +9,7 @@ import exml.objects.GenericObjectFactory;
 import exml.objects.StringConverter;
 import exml.objects.ReferenceConverter;
 import exml.objects.GenericAccessor;
+import exml.objects.IAccessor;
 
 public class TuebaNodeSchema extends ObjectSchema<TuebaNodeMarkable>
     {
@@ -22,10 +23,6 @@ public class TuebaNodeSchema extends ObjectSchema<TuebaNodeMarkable>
         }
         public static TuebaNodeFactory factory=new TuebaNodeFactory();
         public static final Alphabet<String> global_alph=new Alphabet<String>();
-        public static final int IDX_cat=global_alph.lookupIndex("cat");
-        public static final int IDX_func=global_alph.lookupIndex("func");
-        public static final int IDX_parent=global_alph.lookupIndex("parent");
-        public static final int IDX_comment=global_alph.lookupIndex("comment");
         public static final int IDX_children=global_alph.lookupIndex("children");
         public static final int IDX_secEdge=global_alph.lookupIndex("secEdge");
         public static final int IDX_relation=global_alph.lookupIndex("relation");
@@ -34,18 +31,34 @@ public class TuebaNodeSchema extends ObjectSchema<TuebaNodeMarkable>
 
 
         public TuebaNodeSchema() {
-            super("node",factory,global_alph);
+            super("node", TuebaNodeMarkable.class,
+                  factory, global_alph);
             addAttribute("cat", new StringConverter(),
-                         new GenericAccessor<TuebaNodeMarkable,String>(IDX_cat));
+                new IAccessor<TuebaNodeMarkable, String>() {
+                    public String get(TuebaNodeMarkable o) {
+                       return o.getCat(); }
+                    public void put(TuebaNodeMarkable o, String v) {
+                       o.setCat(v); }});
             addAttribute("func", new StringConverter(),
-                         new GenericAccessor<TuebaNodeMarkable,String>(IDX_func));
+                new IAccessor<TuebaNodeMarkable, String>() {
+                    public String get(TuebaNodeMarkable o) {
+                       return o.getEdge_label(); }
+                    public void put(TuebaNodeMarkable o, String v) {
+                       o.setEdge_label(v); }});
             addAttribute("parent", new ReferenceConverter(),
-                         new GenericAccessor<TuebaNodeMarkable,TuebaNodeMarkable>(IDX_parent));
+                new IAccessor<TuebaNodeMarkable, TuebaNodeMarkable>() {
+                    public TuebaNodeMarkable get(TuebaNodeMarkable o) {
+                       return o.getParent(); }
+                    public void put(TuebaNodeMarkable o, TuebaNodeMarkable v) {
+                       o.setParent(v); }});
             addAttribute("comment", new StringConverter(),
-                         new GenericAccessor<TuebaNodeMarkable,String>(IDX_comment));
+                new IAccessor<TuebaNodeMarkable, String>() {
+                    public String get(TuebaNodeMarkable o) {
+                       return o.getComment(); }
+                    public void put(TuebaNodeMarkable o, String v) {
+                       o.setComment(v); }});
             addRelation("secEdge", TuebaSecEdgeSchema.instance);
             addRelation("relation", TuebaRelationSchema.instance);
             addRelation("splitRelation", TuebaSplitRelationSchema.instance);
         }
-
 }

@@ -3,17 +3,23 @@
 
 package exml.tueba;
 import exml.GenericMarkable;
+import exml.annotations.Attribute;
+import exml.annotations.MarkableSchema;
 import java.util.List;
 
-public class TuebaNEMarkable extends GenericMarkable {
+@MarkableSchema(TuebaNESchema.class)
+public class TuebaNEMarkable extends GenericMarkable
+{
     public TuebaNEMarkable() {
         super(TuebaNESchema.instance);
     }
-    public String getType() {
-        return (String) getSlot(TuebaNESchema.IDX_type);
+    private String _kind;
+    @Attribute("type")
+    public String getKind() {
+        return _kind;
     }
 
-    public void setType(String val) {
-        setSlot(TuebaNESchema.IDX_type, val);
+    public void setKind(String val) {
+       _kind = val;
     }
 }

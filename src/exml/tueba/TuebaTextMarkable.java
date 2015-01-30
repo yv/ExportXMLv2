@@ -3,17 +3,23 @@
 
 package exml.tueba;
 import exml.GenericMarkable;
+import exml.annotations.Attribute;
+import exml.annotations.MarkableSchema;
 import java.util.List;
 
-public class TuebaTextMarkable extends GenericMarkable {
+@MarkableSchema(TuebaTextSchema.class)
+public class TuebaTextMarkable extends GenericMarkable
+{
     public TuebaTextMarkable() {
         super(TuebaTextSchema.instance);
     }
+    private String _origin;
+    @Attribute("origin")
     public String getOrigin() {
-        return (String) getSlot(TuebaTextSchema.IDX_origin);
+        return _origin;
     }
 
     public void setOrigin(String val) {
-        setSlot(TuebaTextSchema.IDX_origin, val);
+       _origin = val;
     }
 }

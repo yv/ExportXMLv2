@@ -9,6 +9,7 @@ import exml.objects.GenericObjectFactory;
 import exml.objects.StringConverter;
 import exml.objects.ReferenceConverter;
 import exml.objects.GenericAccessor;
+import exml.objects.IAccessor;
 
 public class TuebaTopicSchema extends ObjectSchema<TuebaTopicMarkable>
     {
@@ -22,16 +23,19 @@ public class TuebaTopicSchema extends ObjectSchema<TuebaTopicMarkable>
         }
         public static TuebaTopicFactory factory=new TuebaTopicFactory();
         public static final Alphabet<String> global_alph=new Alphabet<String>();
-        public static final int IDX_description=global_alph.lookupIndex("description");
         public static final int IDX_discRel=global_alph.lookupIndex("discRel");
         public static final TuebaTopicSchema instance=new TuebaTopicSchema();
 
 
         public TuebaTopicSchema() {
-            super("topic",factory,global_alph);
+            super("topic", TuebaTopicMarkable.class,
+                  factory, global_alph);
             addAttribute("description", new StringConverter(),
-                         new GenericAccessor<TuebaTopicMarkable,String>(IDX_description));
+                new IAccessor<TuebaTopicMarkable, String>() {
+                    public String get(TuebaTopicMarkable o) {
+                       return o.getDescription(); }
+                    public void put(TuebaTopicMarkable o, String v) {
+                       o.setDescription(v); }});
             addRelation("discRel", TuebaDiscRelSchema.instance);
         }
-
 }

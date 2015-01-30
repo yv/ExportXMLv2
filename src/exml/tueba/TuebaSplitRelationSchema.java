@@ -9,6 +9,7 @@ import exml.objects.GenericObjectFactory;
 import exml.objects.StringConverter;
 import exml.objects.ReferenceConverter;
 import exml.objects.GenericAccessor;
+import exml.objects.IAccessor;
 
 public class TuebaSplitRelationSchema extends ObjectSchema<TuebaSplitRelationEdge>
     {
@@ -22,17 +23,23 @@ public class TuebaSplitRelationSchema extends ObjectSchema<TuebaSplitRelationEdg
         }
         public static TuebaSplitRelationFactory factory=new TuebaSplitRelationFactory();
         public static final Alphabet<String> global_alph=new Alphabet<String>();
-        public static final int IDX_type=global_alph.lookupIndex("type");
-        public static final int IDX_target=global_alph.lookupIndex("target");
         public static final TuebaSplitRelationSchema instance=new TuebaSplitRelationSchema();
 
 
         public TuebaSplitRelationSchema() {
-            super("splitRelation",factory,global_alph);
+            super("splitRelation", TuebaSplitRelationEdge.class,
+                  factory, global_alph);
             addAttribute("type", new StringConverter(),
-                         new GenericAccessor<TuebaSplitRelationEdge,String>(IDX_type));
+                new IAccessor<TuebaSplitRelationEdge, String>() {
+                    public String get(TuebaSplitRelationEdge o) {
+                       return o.getType(); }
+                    public void put(TuebaSplitRelationEdge o, String v) {
+                       o.setType(v); }});
             addAttribute("target", new StringConverter(),
-                         new GenericAccessor<TuebaSplitRelationEdge,String>(IDX_target));
+                new IAccessor<TuebaSplitRelationEdge, String>() {
+                    public String get(TuebaSplitRelationEdge o) {
+                       return o.getTarget(); }
+                    public void put(TuebaSplitRelationEdge o, String v) {
+                       o.setTarget(v); }});
         }
-
 }

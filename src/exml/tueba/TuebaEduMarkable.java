@@ -3,9 +3,13 @@
 
 package exml.tueba;
 import exml.GenericMarkable;
+import exml.annotations.Attribute;
+import exml.annotations.MarkableSchema;
 import java.util.List;
 
-public class TuebaEduMarkable extends GenericMarkable {
+@MarkableSchema(TuebaEduSchema.class)
+public class TuebaEduMarkable extends GenericMarkable
+{
     public TuebaEduMarkable() {
         super(TuebaEduSchema.instance);
     }

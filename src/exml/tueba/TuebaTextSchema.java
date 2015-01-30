@@ -9,6 +9,7 @@ import exml.objects.GenericObjectFactory;
 import exml.objects.StringConverter;
 import exml.objects.ReferenceConverter;
 import exml.objects.GenericAccessor;
+import exml.objects.IAccessor;
 
 public class TuebaTextSchema extends ObjectSchema<TuebaTextMarkable>
     {
@@ -22,14 +23,17 @@ public class TuebaTextSchema extends ObjectSchema<TuebaTextMarkable>
         }
         public static TuebaTextFactory factory=new TuebaTextFactory();
         public static final Alphabet<String> global_alph=new Alphabet<String>();
-        public static final int IDX_origin=global_alph.lookupIndex("origin");
         public static final TuebaTextSchema instance=new TuebaTextSchema();
 
 
         public TuebaTextSchema() {
-            super("text",factory,global_alph);
+            super("text", TuebaTextMarkable.class,
+                  factory, global_alph);
             addAttribute("origin", new StringConverter(),
-                         new GenericAccessor<TuebaTextMarkable,String>(IDX_origin));
+                new IAccessor<TuebaTextMarkable, String>() {
+                    public String get(TuebaTextMarkable o) {
+                       return o.getOrigin(); }
+                    public void put(TuebaTextMarkable o, String v) {
+                       o.setOrigin(v); }});
         }
-
 }

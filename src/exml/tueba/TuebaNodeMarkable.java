@@ -3,41 +3,54 @@
 
 package exml.tueba;
 import exml.GenericMarkable;
+import exml.annotations.Attribute;
+import exml.annotations.MarkableSchema;
 import java.util.List;
 import exml.objects.NamedObject;
 import java.util.List;
 
-public class TuebaNodeMarkable extends GenericMarkable {
+@MarkableSchema(TuebaNodeSchema.class)
+public class TuebaNodeMarkable extends GenericMarkable
+  implements TuebaNodeInterface
+{
     public TuebaNodeMarkable() {
         super(TuebaNodeSchema.instance);
     }
+    private String _cat;
+    private String _edge_label;
+    private TuebaNodeMarkable _parent;
+    private String _comment;
+    @Attribute("cat")
     public String getCat() {
-        return (String) getSlot(TuebaNodeSchema.IDX_cat);
+        return _cat;
     }
 
     public void setCat(String val) {
-        setSlot(TuebaNodeSchema.IDX_cat, val);
+       _cat = val;
     }
-    public String getFunc() {
-        return (String) getSlot(TuebaNodeSchema.IDX_func);
+    @Attribute("func")
+    public String getEdge_label() {
+        return _edge_label;
     }
 
-    public void setFunc(String val) {
-        setSlot(TuebaNodeSchema.IDX_func, val);
+    public void setEdge_label(String val) {
+       _edge_label = val;
     }
+    @Attribute("parent")
     public TuebaNodeMarkable getParent() {
-        return (TuebaNodeMarkable) getSlot(TuebaNodeSchema.IDX_parent);
+        return _parent;
     }
 
     public void setParent(TuebaNodeMarkable val) {
-        setSlot(TuebaNodeSchema.IDX_parent, val);
+       _parent = val;
     }
+    @Attribute("comment")
     public String getComment() {
-        return (String) getSlot(TuebaNodeSchema.IDX_comment);
+        return _comment;
     }
 
     public void setComment(String val) {
-        setSlot(TuebaNodeSchema.IDX_comment, val);
+       _comment = val;
     }
     public List<NamedObject> getChildren() {
         return (List<NamedObject>) getSlot(TuebaNodeSchema.IDX_children);

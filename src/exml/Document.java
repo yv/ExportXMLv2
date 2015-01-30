@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import exml.objects.Attribute;
+import exml.objects.BeanAccessors;
 import exml.objects.GenericObject;
 import exml.objects.GenericObjectFactory;
 import exml.objects.IAccessor;
@@ -58,14 +60,18 @@ public class Document<T extends GenericTerminal> {
 	
 	private final List<T> _terminals=new ArrayList<T>();
 	
-	public Document(ObjectSchema<T> schema, GenericObjectFactory<T> factory)
+	public Document(ObjectSchema<T> schema)
 	{
 		_tschema=schema;
 	}
 	
-	public Document(GenericObjectFactory<T> factory)
+	public Document(Class<T> cls, GenericObjectFactory<T> factory)
 	{
-		_tschema=new ObjectSchema<T>("word",factory);
+		_tschema=new ObjectSchema<T>("word", cls, factory);
+	}
+	
+	public Document(Class<T> cls) {
+		_tschema = new ObjectSchema<T>("word", cls);
 	}
 	
 	
@@ -75,7 +81,7 @@ public class Document<T extends GenericTerminal> {
 	 * @return a new Document instance.
 	 */
 	public static Document<GenericTerminal> createDocument() {
-		return new Document<GenericTerminal>(new GenericTerminalFactory());
+		return new Document<GenericTerminal>(GenericTerminal.class, new GenericTerminalFactory());
 	}
 	
 	/**
@@ -135,10 +141,11 @@ public class Document<T extends GenericTerminal> {
 	 * @return target attribute value of that token; null if token has no such attribute
 	 */
 	public String getAttribute(String attributeName, int idx) {
+		Attribute<T,?> att = _tschema.attrs.get(attributeName);
 		if (attributeName.equals("word")) {
-			return (String)_terminals.get(idx).get_word(); //special treatment necessary
+			return (String)_terminals.get(idx).getWord(); //special treatment necessary
 		}
-		return (String)_terminals.get(idx).getSlotByName(attributeName);
+		return att.getString(_terminals.get(idx), this);
 	}	
 	
 	/**
@@ -150,17 +157,19 @@ public class Document<T extends GenericTerminal> {
 	 * 			Each array contains the values of the target attributes for this token. 
 	 * 			Can contain null values if a given token does not have the target attribute.
 	 */
+	@SuppressWarnings("unchecked")
 	public ArrayList<String[]> getAttributes(String[] attributeNames, int idStart, int idEnd) {
+		@SuppressWarnings("rawtypes")
+		Attribute[] attrs = new Attribute[attributeNames.length];
+		for (int i = 0; i<attributeNames.length; i++) {
+			attrs[i] = _tschema.getAttribute(attributeNames[i]);
+		}
 		ArrayList<String[]> att = new ArrayList<String[]>();
 		for (int i= idStart; i<= idEnd; i++) {
 			String[] w = new String[attributeNames.length];
-			GenericTerminal t = _terminals.get(i);
+			T t = _terminals.get(i);
 			for (int j=0; j<attributeNames.length; j++) {
-				if (attributeNames[j].equals("word")) {
-					w[j] = (String)t.get_word();
-				} else {
-					w[j] = (String)t.getSlotByName(attributeNames[j]);
-				}
+				w[i] = attrs[i].getString(t, this);
 			}
 			att.add(w);
 		}
@@ -210,6 +219,7 @@ public class Document<T extends GenericTerminal> {
 		if (schema==null && create) {
 			System.err.println("Warning: Creating markable schema "+name+" on "+this.getClass());
 			schema=new ObjectSchema<GenericMarkable>(name,
+					GenericMarkable.class,
 					new GenericObjectFactory<GenericMarkable>() {
 						public GenericMarkable createObject(ObjectSchema<GenericMarkable> sc) {
 							return new GenericMarkable(sc);
@@ -249,6 +259,26 @@ public class Document<T extends GenericTerminal> {
 					level.schema);
 		}
 	}
+	
+	public <M extends GenericMarkable> MarkableLevel<M>
+		markableLevelForClass(Class<M> cls, String name) {
+		if (_levels_by_name.containsKey(name)) {
+			ObjectSchema<? extends GenericMarkable> schema = _schemas_by_name.get(name);
+			if (schema.isCompatibleWith(cls)) {
+				return (MarkableLevel<M>) _levels_by_name.get(name);
+			} else {
+				throw new IllegalArgumentException(
+						String.format("Cannot use class %s with schema %s",
+								cls.toString(), schema.getName()));
+			}
+		} else {
+			ObjectSchema<M> schema = BeanAccessors.getInstance().schemaForClass(cls);
+			MarkableLevel<M> level = new MarkableLevel<M>(schema, this);
+			_schemas_by_name.put(name, schema);
+			_levels_by_name.put(name, level);
+			return level;
+		}
+	}
 
 	public Set<String> getMarkableLevelNames() {
 		return _levels_by_name.keySet();
@@ -270,6 +300,7 @@ public class Document<T extends GenericTerminal> {
 		ObjectSchema<? extends GenericObject> schema=_edge_schemas_by_name.get(name);
 		if (schema==null && create) {
 			schema=new ObjectSchema<GenericObject>(name,
+					GenericObject.class,
 					new GenericObjectFactory<GenericObject>() {
 						public GenericObject createObject(ObjectSchema<GenericObject> sc) {
 							return new GenericObject(sc.slotnames);
@@ -307,7 +338,7 @@ public class Document<T extends GenericTerminal> {
 	 */
 	public T createTerminal(String word) {
 		T term=_tschema.createMarkable();
-		term.set_word(word);
+		term.setWord(word);
 		term.set_corpus_pos(_terminals.size());
 		_terminals.add(term);
 		return term;

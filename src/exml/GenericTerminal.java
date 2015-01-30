@@ -22,10 +22,10 @@ public class GenericTerminal extends NamedObject {
 	public int get_corpus_pos() {
 		return _corpus_pos;
 	}
-	public void set_word(String _word) {
+	public void setWord(String _word) {
 		this._word = _word;
 	}
-	public String get_word() {
+	public String getWord() {
 		return _word;
 	}
 

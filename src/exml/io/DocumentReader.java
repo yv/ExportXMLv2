@@ -132,7 +132,7 @@ public class DocumentReader<E extends GenericTerminal> {
 			_doc.nameForObject(new_term);
 		}
 		setObjectAttributes(new_term,_doc.terminalSchema(),elm);
-		new_term.set_word(word_val);
+		new_term.setWord(word_val);
 		return new_term;
 	}
 	

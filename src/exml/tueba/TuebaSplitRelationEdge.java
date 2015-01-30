@@ -4,23 +4,27 @@
 package exml.tueba;
 import exml.objects.GenericObject;
 import exml.objects.NamedObject;
+import exml.annotations.MarkableSchema;
 
+@MarkableSchema(TuebaSplitRelationSchema.class)
 public class TuebaSplitRelationEdge extends GenericObject {
     public TuebaSplitRelationEdge() {
         super(TuebaSplitRelationSchema.instance.slotnames);
     }
+    private String _type;
+    private String _target;
     public String getType() {
-        return (String) getSlot(TuebaSplitRelationSchema.IDX_type);
+        return _type;
     }
 
     public void setType(String val) {
-        setSlot(TuebaSplitRelationSchema.IDX_type, val);
+        _type = val;
     }
     public String getTarget() {
-        return (String) getSlot(TuebaSplitRelationSchema.IDX_target);
+        return _target;
     }
 
     public void setTarget(String val) {
-        setSlot(TuebaSplitRelationSchema.IDX_target, val);
+        _target = val;
     }
 }

@@ -9,6 +9,7 @@ import exml.objects.GenericObjectFactory;
 import exml.objects.StringConverter;
 import exml.objects.ReferenceConverter;
 import exml.objects.GenericAccessor;
+import exml.objects.IAccessor;
 
 public class TuebaDiscRelSchema extends ObjectSchema<TuebaDiscRelEdge>
     {
@@ -22,20 +23,29 @@ public class TuebaDiscRelSchema extends ObjectSchema<TuebaDiscRelEdge>
         }
         public static TuebaDiscRelFactory factory=new TuebaDiscRelFactory();
         public static final Alphabet<String> global_alph=new Alphabet<String>();
-        public static final int IDX_relation=global_alph.lookupIndex("relation");
-        public static final int IDX_marking=global_alph.lookupIndex("marking");
-        public static final int IDX_arg2=global_alph.lookupIndex("arg2");
         public static final TuebaDiscRelSchema instance=new TuebaDiscRelSchema();
 
 
         public TuebaDiscRelSchema() {
-            super("discRel",factory,global_alph);
+            super("discRel", TuebaDiscRelEdge.class,
+                  factory, global_alph);
             addAttribute("relation", new StringConverter(),
-                         new GenericAccessor<TuebaDiscRelEdge,String>(IDX_relation));
+                new IAccessor<TuebaDiscRelEdge, String>() {
+                    public String get(TuebaDiscRelEdge o) {
+                       return o.getRelation(); }
+                    public void put(TuebaDiscRelEdge o, String v) {
+                       o.setRelation(v); }});
             addAttribute("marking", new StringConverter(),
-                         new GenericAccessor<TuebaDiscRelEdge,String>(IDX_marking));
+                new IAccessor<TuebaDiscRelEdge, String>() {
+                    public String get(TuebaDiscRelEdge o) {
+                       return o.getMarking(); }
+                    public void put(TuebaDiscRelEdge o, String v) {
+                       o.setMarking(v); }});
             addAttribute("arg2", new ReferenceConverter(),
-                         new GenericAccessor<TuebaDiscRelEdge,NamedObject>(IDX_arg2));
+                new IAccessor<TuebaDiscRelEdge, NamedObject>() {
+                    public NamedObject get(TuebaDiscRelEdge o) {
+                       return o.getArg2(); }
+                    public void put(TuebaDiscRelEdge o, NamedObject v) {
+                       o.setArg2(v); }});
         }
-
 }

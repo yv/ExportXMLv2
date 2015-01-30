@@ -9,6 +9,7 @@ import exml.objects.GenericObjectFactory;
 import exml.objects.StringConverter;
 import exml.objects.ReferenceConverter;
 import exml.objects.GenericAccessor;
+import exml.objects.IAccessor;
 
 public class TuebaRelationSchema extends ObjectSchema<TuebaRelationEdge>
     {
@@ -22,17 +23,23 @@ public class TuebaRelationSchema extends ObjectSchema<TuebaRelationEdge>
         }
         public static TuebaRelationFactory factory=new TuebaRelationFactory();
         public static final Alphabet<String> global_alph=new Alphabet<String>();
-        public static final int IDX_type=global_alph.lookupIndex("type");
-        public static final int IDX_target=global_alph.lookupIndex("target");
         public static final TuebaRelationSchema instance=new TuebaRelationSchema();
 
 
         public TuebaRelationSchema() {
-            super("relation",factory,global_alph);
+            super("relation", TuebaRelationEdge.class,
+                  factory, global_alph);
             addAttribute("type", new StringConverter(),
-                         new GenericAccessor<TuebaRelationEdge,String>(IDX_type));
+                new IAccessor<TuebaRelationEdge, String>() {
+                    public String get(TuebaRelationEdge o) {
+                       return o.getType(); }
+                    public void put(TuebaRelationEdge o, String v) {
+                       o.setType(v); }});
             addAttribute("target", new ReferenceConverter(),
-                         new GenericAccessor<TuebaRelationEdge,TuebaNodeInterface>(IDX_target));
+                new IAccessor<TuebaRelationEdge, TuebaNodeInterface>() {
+                    public TuebaNodeInterface get(TuebaRelationEdge o) {
+                       return o.getTarget(); }
+                    public void put(TuebaRelationEdge o, TuebaNodeInterface v) {
+                       o.setTarget(v); }});
         }
-
 }

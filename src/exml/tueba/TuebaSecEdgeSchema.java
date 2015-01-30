@@ -9,6 +9,7 @@ import exml.objects.GenericObjectFactory;
 import exml.objects.StringConverter;
 import exml.objects.ReferenceConverter;
 import exml.objects.GenericAccessor;
+import exml.objects.IAccessor;
 
 public class TuebaSecEdgeSchema extends ObjectSchema<TuebaSecEdgeEdge>
     {
@@ -22,17 +23,23 @@ public class TuebaSecEdgeSchema extends ObjectSchema<TuebaSecEdgeEdge>
         }
         public static TuebaSecEdgeFactory factory=new TuebaSecEdgeFactory();
         public static final Alphabet<String> global_alph=new Alphabet<String>();
-        public static final int IDX_cat=global_alph.lookupIndex("cat");
-        public static final int IDX_parent=global_alph.lookupIndex("parent");
         public static final TuebaSecEdgeSchema instance=new TuebaSecEdgeSchema();
 
 
         public TuebaSecEdgeSchema() {
-            super("secEdge",factory,global_alph);
+            super("secEdge", TuebaSecEdgeEdge.class,
+                  factory, global_alph);
             addAttribute("cat", new StringConverter(),
-                         new GenericAccessor<TuebaSecEdgeEdge,String>(IDX_cat));
+                new IAccessor<TuebaSecEdgeEdge, String>() {
+                    public String get(TuebaSecEdgeEdge o) {
+                       return o.getCat(); }
+                    public void put(TuebaSecEdgeEdge o, String v) {
+                       o.setCat(v); }});
             addAttribute("parent", new ReferenceConverter(),
-                         new GenericAccessor<TuebaSecEdgeEdge,TuebaNodeInterface>(IDX_parent));
+                new IAccessor<TuebaSecEdgeEdge, TuebaNodeInterface>() {
+                    public TuebaNodeInterface get(TuebaSecEdgeEdge o) {
+                       return o.getParent(); }
+                    public void put(TuebaSecEdgeEdge o, TuebaNodeInterface v) {
+                       o.setParent(v); }});
         }
-
 }

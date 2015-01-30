@@ -12,8 +12,8 @@ public interface TuebaNodeInterface {
     int getEnd();
     TuebaNodeMarkable getParent();
     void setParent(TuebaNodeMarkable val);
-    String getFunc();
-    void setFunc(String val);
+    String getEdge_label();
+    void setEdge_label(String val);
     public List<TuebaSecEdgeEdge> getSecEdge();
     public List<TuebaRelationEdge> getRelation();
 }

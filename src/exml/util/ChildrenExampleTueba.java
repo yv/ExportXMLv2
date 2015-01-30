@@ -21,7 +21,7 @@ public class ChildrenExampleTueba {
 	@SuppressWarnings("unchecked")
 	public ChildrenExampleTueba(TuebaDocument d) {
 		doc=d;
-		nodes=(MarkableLevel<TuebaNodeMarkable>) doc.markableLevelByName("node", false);
+		nodes = doc.nodes;
 	}
 	
 	public void printNode(TuebaNodeMarkable node) {
@@ -38,7 +38,7 @@ public class ChildrenExampleTueba {
 	}
 	
 	public void printTerminal(TuebaTerminal tn) {
-		System.out.format("(%s %s)", tn.getCat(), tn.get_word());
+		System.out.format("(%s %s)", tn.getCat(), tn.getWord());
 	}
 
 	public void printTrees() {

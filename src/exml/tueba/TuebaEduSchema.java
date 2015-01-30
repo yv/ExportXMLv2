@@ -9,6 +9,7 @@ import exml.objects.GenericObjectFactory;
 import exml.objects.StringConverter;
 import exml.objects.ReferenceConverter;
 import exml.objects.GenericAccessor;
+import exml.objects.IAccessor;
 
 public class TuebaEduSchema extends ObjectSchema<TuebaEduMarkable>
     {
@@ -27,8 +28,8 @@ public class TuebaEduSchema extends ObjectSchema<TuebaEduMarkable>
 
 
         public TuebaEduSchema() {
-            super("edu",factory,global_alph);
+            super("edu", TuebaEduMarkable.class,
+                  factory, global_alph);
             addRelation("discRel", TuebaDiscRelSchema.instance);
         }
-
 }

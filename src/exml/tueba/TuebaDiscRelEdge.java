@@ -4,30 +4,35 @@
 package exml.tueba;
 import exml.objects.GenericObject;
 import exml.objects.NamedObject;
+import exml.annotations.MarkableSchema;
 
+@MarkableSchema(TuebaDiscRelSchema.class)
 public class TuebaDiscRelEdge extends GenericObject {
     public TuebaDiscRelEdge() {
         super(TuebaDiscRelSchema.instance.slotnames);
     }
+    private String _relation;
+    private String _marking;
+    private NamedObject _arg2;
     public String getRelation() {
-        return (String) getSlot(TuebaDiscRelSchema.IDX_relation);
+        return _relation;
     }
 
     public void setRelation(String val) {
-        setSlot(TuebaDiscRelSchema.IDX_relation, val);
+        _relation = val;
     }
     public String getMarking() {
-        return (String) getSlot(TuebaDiscRelSchema.IDX_marking);
+        return _marking;
     }
 
     public void setMarking(String val) {
-        setSlot(TuebaDiscRelSchema.IDX_marking, val);
+        _marking = val;
     }
     public NamedObject getArg2() {
-        return (NamedObject) getSlot(TuebaDiscRelSchema.IDX_arg2);
+        return _arg2;
     }
 
     public void setArg2(NamedObject val) {
-        setSlot(TuebaDiscRelSchema.IDX_arg2, val);
+        _arg2 = val;
     }
 }

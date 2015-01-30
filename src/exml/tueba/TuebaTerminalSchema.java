@@ -8,10 +8,11 @@ import exml.objects.GenericObjectFactory;
 import exml.objects.NamedObject;
 import exml.objects.StringConverter;
 import exml.objects.ReferenceConverter;
+import exml.objects.IAccessor;
 import exml.objects.GenericAccessor;
 
 public class TuebaTerminalSchema extends ObjectSchema<TuebaTerminal>
-    {
+{
         public static class TuebaTerminalFactory
             implements GenericObjectFactory<TuebaTerminal>
         {
@@ -23,55 +24,84 @@ public class TuebaTerminalSchema extends ObjectSchema<TuebaTerminal>
         public static TuebaTerminalFactory factory=new TuebaTerminalFactory();
 
         public static final Alphabet<String> global_alph=new Alphabet<String>();
-        
-        public static final int IDX_word=global_alph.lookupIndex("form");
-        
-        public static final int IDX_cat=global_alph.lookupIndex("pos");
-        
-        public static final int IDX_morph=global_alph.lookupIndex("morph");
-        
-        public static final int IDX_lemma=global_alph.lookupIndex("lemma");
-        
-        public static final int IDX_edge_label=global_alph.lookupIndex("func");
-        
-        public static final int IDX_parent=global_alph.lookupIndex("parent");
-        
-        public static final int IDX_wsd_lexunits=global_alph.lookupIndex("wsd-lexunits");
-        
-        public static final int IDX_wsd_comment=global_alph.lookupIndex("wsd-comment");
-        
-        public static final int IDX_syn_parent=global_alph.lookupIndex("dephead");
-        
-        public static final int IDX_syn_label=global_alph.lookupIndex("deprel");
-        
-        public static final int IDX_comment=global_alph.lookupIndex("comment");
-        
 
         public static final TuebaTerminalSchema instance=new TuebaTerminalSchema();
+        public static final int IDX_secEdge=global_alph.lookupIndex("secEdge");
+        public static final int IDX_relation=global_alph.lookupIndex("relation");
+        public static final int IDX_splitRelation=global_alph.lookupIndex("splitRelation");
+        public static final int IDX_connective=global_alph.lookupIndex("connective");
         public TuebaTerminalSchema() {
-            super("word",factory,global_alph);
+            super("word",TuebaTerminal.class,factory,global_alph);
             addAttribute("form", new StringConverter(),
-                         new GenericAccessor<TuebaTerminal,String>(IDX_word));
+                new IAccessor<TuebaTerminal, String>() {
+                    public String get(TuebaTerminal o) {
+                       return o.getWord(); }
+                    public void put(TuebaTerminal o, String v) {
+                       o.setWord(v); }});
             addAttribute("pos", new StringConverter(),
-                         new GenericAccessor<TuebaTerminal,String>(IDX_cat));
+                new IAccessor<TuebaTerminal, String>() {
+                    public String get(TuebaTerminal o) {
+                       return o.getCat(); }
+                    public void put(TuebaTerminal o, String v) {
+                       o.setCat(v); }});
             addAttribute("morph", new StringConverter(),
-                         new GenericAccessor<TuebaTerminal,String>(IDX_morph));
+                new IAccessor<TuebaTerminal, String>() {
+                    public String get(TuebaTerminal o) {
+                       return o.getMorph(); }
+                    public void put(TuebaTerminal o, String v) {
+                       o.setMorph(v); }});
             addAttribute("lemma", new StringConverter(),
-                         new GenericAccessor<TuebaTerminal,String>(IDX_lemma));
+                new IAccessor<TuebaTerminal, String>() {
+                    public String get(TuebaTerminal o) {
+                       return o.getLemma(); }
+                    public void put(TuebaTerminal o, String v) {
+                       o.setLemma(v); }});
             addAttribute("func", new StringConverter(),
-                         new GenericAccessor<TuebaTerminal,String>(IDX_edge_label));
+                new IAccessor<TuebaTerminal, String>() {
+                    public String get(TuebaTerminal o) {
+                       return o.getEdge_label(); }
+                    public void put(TuebaTerminal o, String v) {
+                       o.setEdge_label(v); }});
             addAttribute("parent", new ReferenceConverter(),
-                         new GenericAccessor<TuebaTerminal,TuebaNodeMarkable>(IDX_parent));
+                new IAccessor<TuebaTerminal, TuebaNodeMarkable>() {
+                    public TuebaNodeMarkable get(TuebaTerminal o) {
+                       return o.getParent(); }
+                    public void put(TuebaTerminal o, TuebaNodeMarkable v) {
+                       o.setParent(v); }});
             addAttribute("wsd-lexunits", new StringConverter(),
-                         new GenericAccessor<TuebaTerminal,String>(IDX_wsd_lexunits));
+                new IAccessor<TuebaTerminal, String>() {
+                    public String get(TuebaTerminal o) {
+                       return o.getWsd_lexunits(); }
+                    public void put(TuebaTerminal o, String v) {
+                       o.setWsd_lexunits(v); }});
             addAttribute("wsd-comment", new StringConverter(),
-                         new GenericAccessor<TuebaTerminal,String>(IDX_wsd_comment));
+                new IAccessor<TuebaTerminal, String>() {
+                    public String get(TuebaTerminal o) {
+                       return o.getWsd_comment(); }
+                    public void put(TuebaTerminal o, String v) {
+                       o.setWsd_comment(v); }});
             addAttribute("dephead", new ReferenceConverter(),
-                         new GenericAccessor<TuebaTerminal,TuebaTerminal>(IDX_syn_parent));
+                new IAccessor<TuebaTerminal, TuebaTerminal>() {
+                    public TuebaTerminal get(TuebaTerminal o) {
+                       return o.getSyn_parent(); }
+                    public void put(TuebaTerminal o, TuebaTerminal v) {
+                       o.setSyn_parent(v); }});
             addAttribute("deprel", new StringConverter(),
-                         new GenericAccessor<TuebaTerminal,String>(IDX_syn_label));
+                new IAccessor<TuebaTerminal, String>() {
+                    public String get(TuebaTerminal o) {
+                       return o.getSyn_label(); }
+                    public void put(TuebaTerminal o, String v) {
+                       o.setSyn_label(v); }});
             addAttribute("comment", new StringConverter(),
-                         new GenericAccessor<TuebaTerminal,String>(IDX_comment));
+                new IAccessor<TuebaTerminal, String>() {
+                    public String get(TuebaTerminal o) {
+                       return o.getComment(); }
+                    public void put(TuebaTerminal o, String v) {
+                       o.setComment(v); }});
+            addRelation("secEdge", TuebaSecEdgeSchema.instance);
+            addRelation("relation", TuebaRelationSchema.instance);
+            addRelation("splitRelation", TuebaSplitRelationSchema.instance);
+            addRelation("connective", TuebaConnectiveSchema.instance);
         }
 
 }

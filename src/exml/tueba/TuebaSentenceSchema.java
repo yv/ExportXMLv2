@@ -9,6 +9,7 @@ import exml.objects.GenericObjectFactory;
 import exml.objects.StringConverter;
 import exml.objects.ReferenceConverter;
 import exml.objects.GenericAccessor;
+import exml.objects.IAccessor;
 
 public class TuebaSentenceSchema extends ObjectSchema<TuebaSentenceMarkable>
     {
@@ -26,7 +27,7 @@ public class TuebaSentenceSchema extends ObjectSchema<TuebaSentenceMarkable>
 
 
         public TuebaSentenceSchema() {
-            super("sentence",factory,global_alph);
+            super("sentence", TuebaSentenceMarkable.class,
+                  factory, global_alph);
         }
-
 }

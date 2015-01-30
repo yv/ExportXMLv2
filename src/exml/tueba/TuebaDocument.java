@@ -56,34 +56,42 @@ public class TuebaDocument extends Document<TuebaTerminal> {
 	 * fields for children, category, part-of-speech and word form.
 	 */
 	public TuebaDocument() {
-		super(TuebaTerminalSchema.instance, TuebaTerminalSchema.factory);
+		super(TuebaTerminalSchema.instance);
         sentences = new MarkableLevel<TuebaSentenceMarkable>(TuebaSentenceSchema.instance,this);
         addMarkableLevel(sentences, "sentence");
         nodes = new MarkableLevel<TuebaNodeMarkable>(TuebaNodeSchema.instance,this);
         addMarkableLevel(nodes, "node");
-        node_cat = TuebaNodeSchema.instance.<String> genericAccessor("cat");
-        node_edge_label = TuebaNodeSchema.instance.<String> genericAccessor("func");
-        node_parent = TuebaNodeSchema.instance.<TuebaNodeMarkable> genericAccessor("parent");
-        node_comment = TuebaNodeSchema.instance.<String> genericAccessor("comment");
+        node_cat = 
+           (IAccessor<TuebaNodeMarkable, String>) TuebaNodeSchema.instance.getAttribute("cat").accessor;
+        node_edge_label = 
+           (IAccessor<TuebaNodeMarkable, String>) TuebaNodeSchema.instance.getAttribute("func").accessor;
+        node_parent = 
+           (IAccessor<TuebaNodeMarkable, TuebaNodeMarkable>) TuebaNodeSchema.instance.getAttribute("parent").accessor;
+        node_comment = 
+           (IAccessor<TuebaNodeMarkable, String>) TuebaNodeSchema.instance.getAttribute("comment").accessor;
         texts = new MarkableLevel<TuebaTextMarkable>(TuebaTextSchema.instance,this);
         addMarkableLevel(texts, "text");
-        text_origin = TuebaTextSchema.instance.<String> genericAccessor("origin");
+        text_origin = 
+           (IAccessor<TuebaTextMarkable, String>) TuebaTextSchema.instance.getAttribute("origin").accessor;
         nes = new MarkableLevel<TuebaNEMarkable>(TuebaNESchema.instance,this);
         addMarkableLevel(nes, "ne");
-        ne_kind = TuebaNESchema.instance.<String> genericAccessor("type");
+        ne_kind = 
+           (IAccessor<TuebaNEMarkable, String>) TuebaNESchema.instance.getAttribute("type").accessor;
         edus = new MarkableLevel<TuebaEduMarkable>(TuebaEduSchema.instance,this);
         addMarkableLevel(edus, "edu");
         topics = new MarkableLevel<TuebaTopicMarkable>(TuebaTopicSchema.instance,this);
         addMarkableLevel(topics, "topic");
-        topic_description = TuebaTopicSchema.instance.<String> genericAccessor("description");
+        topic_description = 
+           (IAccessor<TuebaTopicMarkable, String>) TuebaTopicSchema.instance.getAttribute("description").accessor;
         edu_ranges = new MarkableLevel<TuebaEduRangeMarkable>(TuebaEduRangeSchema.instance,this);
         addMarkableLevel(edu_ranges, "edu-range");
 		node_children = nodes.schema
 				.<List<NamedObject>> genericAccessor("children");
         addEdgeSchema("splitRelation", TuebaSplitRelationSchema.instance);
+        addEdgeSchema("discRel", TuebaDiscRelSchema.instance);
         addEdgeSchema("secEdge", TuebaSecEdgeSchema.instance);
         addEdgeSchema("relation", TuebaRelationSchema.instance);
-        addEdgeSchema("discRel", TuebaDiscRelSchema.instance);
+        addEdgeSchema("connective", TuebaConnectiveSchema.instance);
         word_word = TuebaTerminalSchema.instance.<String> genericAccessor("form");
         word_cat = TuebaTerminalSchema.instance.<String> genericAccessor("pos");
         word_morph = TuebaTerminalSchema.instance.<String> genericAccessor("morph");

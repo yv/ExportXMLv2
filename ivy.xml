@@ -39,5 +39,7 @@
        <dependency org="com.google.guava" name="guava" rev="15.0" />
        <dependency org="net.sf.trove4j" name="trove4j" rev="3.0.3" />
        <dependency org="org.apache.commons" name="commons-lang3" rev="3.3.2" />
+       <dependency org="org.ow2.asm" name="asm" rev="5.0.3"/>
+       
     </dependencies>
 </ivy-module>
