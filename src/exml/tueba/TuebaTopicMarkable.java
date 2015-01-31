@@ -3,7 +3,7 @@
 
 package exml.tueba;
 import exml.GenericMarkable;
-import exml.annotations.Attribute;
+import exml.annotations.EXMLAttribute;
 import exml.annotations.MarkableSchema;
 import java.util.List;
 
@@ -14,7 +14,7 @@ public class TuebaTopicMarkable extends GenericMarkable
         super(TuebaTopicSchema.instance);
     }
     private String _description;
-    @Attribute("description")
+    @EXMLAttribute("description")
     public String getDescription() {
         return _description;
     }

@@ -3,7 +3,7 @@ package exml.objects;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Relation<Obj extends GenericObject, Val extends GenericObject> {
+public class Relation<Obj, Val extends GenericObject> {
 	public final String name;
 	public final IAccessor<Obj, List<Val>> accessor;
 	public final ObjectSchema<Val> schema;

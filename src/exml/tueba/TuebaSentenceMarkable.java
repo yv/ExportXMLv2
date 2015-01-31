@@ -3,7 +3,7 @@
 
 package exml.tueba;
 import exml.GenericMarkable;
-import exml.annotations.Attribute;
+import exml.annotations.EXMLAttribute;
 import exml.annotations.MarkableSchema;
 import java.util.List;
 

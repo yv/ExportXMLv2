@@ -25,8 +25,6 @@ public class TuebaTerminalSchema extends ObjectSchema<TuebaTerminal>
         public static TuebaTerminalFactory factory=new TuebaTerminalFactory();
 
         public static final Alphabet<String> global_alph=new Alphabet<String>();
-
-        public static final TuebaTerminalSchema instance=new TuebaTerminalSchema();
         public static final Attribute<TuebaTerminal, String> ATTR_word = new Attribute<TuebaTerminal, String> ("form",
                 new IAccessor<TuebaTerminal, String>() {
                     public String get(TuebaTerminal o) {
@@ -108,6 +106,7 @@ public class TuebaTerminalSchema extends ObjectSchema<TuebaTerminal>
         public static final int IDX_relation=global_alph.lookupIndex("relation");
         public static final int IDX_splitRelation=global_alph.lookupIndex("splitRelation");
         public static final int IDX_connective=global_alph.lookupIndex("connective");
+        public static final TuebaTerminalSchema instance=new TuebaTerminalSchema();
         public TuebaTerminalSchema() {
             super("word",TuebaTerminal.class,factory,global_alph);
             addAttribute(ATTR_word);

@@ -4,6 +4,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +17,8 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import exml.MissingObjectException;
+import exml.annotations.EXMLAttribute;
+import exml.annotations.EXMLRelation;
 import exml.annotations.MarkableSchema;
 import exml.simple.SimpleToken;
 import exml.tueba.TuebaNEMarkable;
@@ -45,26 +49,76 @@ public class BeanAccessors extends ClassLoader implements Opcodes{
 	
 	static class BeanAccessor<E, V> {
 		public AccessorType tp = null;
+		public boolean isRelation;
 		public Class<E> host_cls;
 		public Class<V> val_cls;
+		public Type val_type;
 		public String attName;
 		public IAccessor<E, V> accessor;
 		
 		/** creates an object describing a getX method */
 		@SuppressWarnings("unchecked")
 		public BeanAccessor(Method m, Class<E> cls) {
+            EXMLAttribute att = m.getAnnotation(EXMLAttribute.class);
+			EXMLRelation att2 = m.getAnnotation(EXMLRelation.class);
 			tp = AccessorType.METHOD;
 			host_cls = cls;
 			val_cls = ((Class<V>)m.getReturnType());
+			val_type = m.getGenericReturnType();
 			attName = StringUtils.uncapitalize(m.getName().substring(3));
+			if (att != null) {
+				if (att.value() != null) {
+					attName = att.value();
+				}
+			}
+			if (att2 != null) {
+				isRelation = true;
+				if (att2.value() != null) {
+					attName = att2.value();
+				}
+			}
 		}
 		
 		public BeanAccessor(Field f, Class<E> cls) {
+			EXMLAttribute att = f.getAnnotation(EXMLAttribute.class);
+			EXMLRelation att2 = f.getAnnotation(EXMLRelation.class);
 			tp = AccessorType.FIELD;
 			host_cls = cls;
 			val_cls = ((Class<V>)f.getType());
+			val_type = f.getGenericType();
 			attName = f.getName();
-			
+			if (att != null) {
+				if (att.value() != null) {
+					attName = att.value();
+				}
+			}
+			if (att2 != null) {
+				isRelation = true;
+				if (att2.value() != null) {
+					attName = att2.value();
+				}
+			}
+		}
+		
+		public Class<?> memberType() {
+			if (List.class.isAssignableFrom(val_cls)) {
+				ParameterizedType t_lst = (ParameterizedType) val_type;
+				Type t_mem = t_lst.getActualTypeArguments()[0];
+				try {
+					return (Class<?>) t_mem;
+				} catch (ClassCastException ex) {
+					return (Class<?>)((ParameterizedType) t_mem).getRawType();
+				}
+			} else {
+				return null;
+			}
+		}
+		
+		public <M extends GenericObject> Relation<E,M> makeRelation() {
+			Class<M> cls = (Class<M>)memberType();
+			ObjectSchema<M> schema = instance.schemaForClass(cls);
+			IAccessor<E, List<M>> acc = (IAccessor<E, List<M>>)accessor;
+			return new Relation<E,M>(attName, acc, schema);
 		}
 		
 		public String getClassName() {
@@ -72,11 +126,11 @@ public class BeanAccessors extends ClassLoader implements Opcodes{
 		}
 	}
 	
-	public static <E> String nameForClass(Class<E> cls) {
+	public static String nameForClass(Class<?> cls) {
 		return "L"+cls.getCanonicalName().replace(".", "/")+";";
 	}
 
-	public static <E> String classnameForClass(Class<E> cls) {
+	public static String classnameForClass(Class<?> cls) {
 		return cls.getCanonicalName().replace(".", "/");
 	}
 
@@ -182,9 +236,8 @@ public class BeanAccessors extends ClassLoader implements Opcodes{
 		try {
 			BeanAccessor acc = new BeanAccessor(m, cls);
 			Class clazz;
-			try {
-				clazz = instance.findClass(acc.getClassName());
-			} catch (ClassNotFoundException ex) { 
+			clazz = instance.findLoadedClass(acc.getClassName());
+			if (clazz == null) {
 				byte[] data= compile(cls, acc);
 				clazz= instance.defineClass(acc.getClassName(),
 						data, 0, data.length);
@@ -201,11 +254,10 @@ public class BeanAccessors extends ClassLoader implements Opcodes{
 		try {
 			BeanAccessor acc = new BeanAccessor(f, cls);
 			Class clazz;
-			try {
-				clazz = instance.findClass(acc.getClassName());
-			} catch (ClassNotFoundException ex) { 
+			clazz = instance.findLoadedClass(acc.getClassName());
+			if (clazz == null) {
 				byte[] data= compile(cls, acc);
-				clazz= instance.defineClass(acc.getClassName(),
+				clazz = instance.defineClass(acc.getClassName(),
 						data, 0, data.length);
 			}
 			acc.accessor = (IAccessor)clazz.newInstance();
@@ -220,7 +272,8 @@ public class BeanAccessors extends ClassLoader implements Opcodes{
 		List<BeanAccessor<E,?>> result = new ArrayList<BeanAccessors.BeanAccessor<E,?>>();
 		for (Method m: cls.getMethods()) {
 			String m_name = m.getName();
-			if (m_name.matches("get(Holes|Start|End|XMLId)"))
+			if (m_name.matches("get(Holes|Start|End|XMLId|Class)") &&
+					(m.getModifiers() & Modifier.STATIC) == 0)
 				continue;
 			if(m.getName().startsWith("get") && m.getParameterTypes().length == 0) {
 				result.add(makeAccessor(m, cls));
@@ -229,7 +282,8 @@ public class BeanAccessors extends ClassLoader implements Opcodes{
 		for (Field f: cls.getFields()) {
 			String f_name = f.getName();
 			if ((f.getModifiers() & Modifier.PUBLIC) != 0 &&
-					(f.getModifiers() & Modifier.STATIC) == 0) {
+					(f.getModifiers() & Modifier.STATIC) == 0 &&
+					!f_name.matches("class")) {
 				result.add(makeAccessor(f, cls));
 			}
 		}
@@ -241,15 +295,21 @@ public class BeanAccessors extends ClassLoader implements Opcodes{
 		List<Attribute<E,V>> att = new ArrayList<Attribute<E,V>>();
 		for (BeanAccessor acc: getAccessors(cls)) {
 			Class<V> val_cls = acc.val_cls;
-			IConverter conv = null;
-			if (val_cls == String.class) {
-				conv =StringConverter.instance;
-			} else if (NamedObject.class.isAssignableFrom(val_cls)) {
-				conv = new ReferenceConverter<NamedObject>();
-			} else if (List.class.isAssignableFrom(val_cls)) {
-				// relation
+			if (acc.isRelation) {
+				schema.addRelation(acc.makeRelation());
+			} else {
+				IConverter conv = null;
+				if (val_cls == String.class) {
+					conv =StringConverter.instance;
+				} else if (NamedObject.class.isAssignableFrom(val_cls)) {
+					conv = new ReferenceConverter<NamedObject>();
+				} else if (val_cls.isEnum()) {
+					conv = new JavaEnumConverter(val_cls);
+				} else {
+					throw new RuntimeException("No converter for class:"+val_cls.toString());
+				}
+				schema.addAttribute(new Attribute<E, V>(acc.attName, acc.accessor, conv));
 			}
-			schema.addAttribute(new Attribute<E, V>(acc.attName, acc.accessor, conv));
 		}
 		return att;
 	}
@@ -299,6 +359,7 @@ public class BeanAccessors extends ClassLoader implements Opcodes{
 	public static void main(String[] args) {
 		ObjectSchema<TuebaNEMarkable> schema = instance.schemaForClass(TuebaNEMarkable.class);
 		ObjectSchema<SimpleToken> token_schema = instance.schemaForClass(SimpleToken.class);
+		ObjectSchema<SimpleToken> tokn_schema = instance.schemaForClass(SimpleToken.class);
 		TuebaNEMarkable m = schema.createMarkable();
 		m.setKind("ORG");
 		@SuppressWarnings("unchecked")

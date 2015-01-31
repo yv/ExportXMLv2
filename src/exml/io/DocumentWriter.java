@@ -46,7 +46,7 @@ public class DocumentWriter<T extends GenericTerminal> {
 		ObjectSchema<E> schema = (ObjectSchema<E>) _doc.markableSchemaByName(levelName, false);
 		for (E m: level.getMarkables()) {
 			allMarkables.add(
-					new WriterStackEntry<E>(schema, m));
+					new WriterStackEntry<E>(schema, levelName, m));
 		}
 	}
 	
@@ -159,8 +159,10 @@ public class DocumentWriter<T extends GenericTerminal> {
 		ObjectSchema<M> schema=entry.schema;
 		M m=entry.value;
 		writeIndent(0);
-		_writer.writeStartElement(schema.getName());
-		_writer.writeAttribute("xml","http://www.w3.org/XML/1998/namespace", "id", m.getXMLId());
+		_writer.writeStartElement(entry.levelName);
+		if (m.getXMLId() != null) {
+			_writer.writeAttribute("xml","http://www.w3.org/XML/1998/namespace", "id", m.getXMLId());
+		}
 		for (String key: (Set<String>)schema.attrs.keySet()) {
 			Attribute att = (Attribute)schema.attrs.get(key);
 			Object val = att.accessor.get(m);

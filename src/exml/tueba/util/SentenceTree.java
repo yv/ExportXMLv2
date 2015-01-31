@@ -30,6 +30,11 @@ public class SentenceTree {
 	public List<NamedObject> getRoots() {
 		return _roots;
 	}
+	
+	public int getStart() {
+		return _terminals.get(0).getStart();
+	}
+	
 	public void setRoots(List<NamedObject> _roots) {
 		this._roots = _roots;
 	}

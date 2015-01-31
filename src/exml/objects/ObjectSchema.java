@@ -48,6 +48,10 @@ public class ObjectSchema<T extends GenericObject> {
 	public <V extends GenericObject> void addRelation(String name, ObjectSchema<V> schema) {
 		rels.put(name,new Relation<T,V>(name, this.<List<V>>genericAccessor(name), schema));
 	}
+	
+	public <V extends GenericObject> void addRelation(Relation<T,V> rel) {
+		rels.put(rel.name, rel);
+	}
 
 	public ObjectSchema(String name, Class<T> cls,
 			GenericObjectFactory<T> factory, Alphabet<String> xslotnames) {

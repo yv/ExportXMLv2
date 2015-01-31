@@ -3,7 +3,7 @@
 
 package exml.tueba;
 import exml.GenericMarkable;
-import exml.annotations.Attribute;
+import exml.annotations.EXMLAttribute;
 import exml.annotations.MarkableSchema;
 import java.util.List;
 import exml.objects.NamedObject;
@@ -20,7 +20,7 @@ public class TuebaNodeMarkable extends GenericMarkable
     private String _edge_label;
     private TuebaNodeMarkable _parent;
     private String _comment;
-    @Attribute("cat")
+    @EXMLAttribute("cat")
     public String getCat() {
         return _cat;
     }
@@ -28,7 +28,7 @@ public class TuebaNodeMarkable extends GenericMarkable
     public void setCat(String val) {
        _cat = val;
     }
-    @Attribute("func")
+    @EXMLAttribute("func")
     public String getEdge_label() {
         return _edge_label;
     }
@@ -36,7 +36,7 @@ public class TuebaNodeMarkable extends GenericMarkable
     public void setEdge_label(String val) {
        _edge_label = val;
     }
-    @Attribute("parent")
+    @EXMLAttribute("parent")
     public TuebaNodeMarkable getParent() {
         return _parent;
     }
@@ -44,7 +44,7 @@ public class TuebaNodeMarkable extends GenericMarkable
     public void setParent(TuebaNodeMarkable val) {
        _parent = val;
     }
-    @Attribute("comment")
+    @EXMLAttribute("comment")
     public String getComment() {
         return _comment;
     }
