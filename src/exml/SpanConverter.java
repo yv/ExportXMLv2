@@ -6,14 +6,13 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import exml.objects.IConverter;
-import gnu.trove.list.array.TIntArrayList;
 
-public class SpanConverter implements IConverter<TIntArrayList> {
+public class SpanConverter implements IConverter<Span> {
 
 	@Override
-	public TIntArrayList convertFromString(String s, Document<?> doc)
+	public Span convertFromString(String s, Document<?> doc)
 			throws MissingObjectException {
-		TIntArrayList parts = new TIntArrayList();
+		Span parts = new Span();
 		for (String subSpan : s.split(",")) {
 			if (subSpan.contains("..")) {
 				String[] range = subSpan.split("\\.\\.");
@@ -29,7 +28,7 @@ public class SpanConverter implements IConverter<TIntArrayList> {
 	}
 
 	@Override
-	public String convertToString(TIntArrayList obj, Document<?> doc) {
+	public String convertToString(Span obj, Document<?> doc) {
 		StringBuffer buf = new StringBuffer();
 		ArrayList<String> parts=new ArrayList<String>();
 		for (int i=0; i<obj.size();i+=2) {

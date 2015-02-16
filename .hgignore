@@ -5,3 +5,8 @@ doc/.*
 \.aux$
 ~$
 \.pdf$
+
+syntax: regexp
+^lib$
+syntax: regexp
+^dist$

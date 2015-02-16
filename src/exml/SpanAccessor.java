@@ -4,15 +4,17 @@ import exml.objects.Attribute;
 import exml.objects.IAccessor;
 import gnu.trove.list.array.TIntArrayList;
 
-public class SpanAccessor<T extends GenericMarkable> implements IAccessor<T,TIntArrayList>{
+public class SpanAccessor<T extends GenericMarkable> implements IAccessor<T,Span>{
 
+	@SuppressWarnings("rawtypes")
 	public static final SpanAccessor instance = new SpanAccessor();
-	public static final Attribute<GenericMarkable,TIntArrayList> span_attribute = 
+	@SuppressWarnings("unchecked")
+	public static final Attribute<GenericMarkable,Span> span_attribute = 
 			new Attribute("span", instance, SpanConverter.instance);
 	
 	@Override
-	public TIntArrayList get(GenericMarkable m) {
-		TIntArrayList result=new TIntArrayList();
+	public Span get(GenericMarkable m) {
+		Span result=new Span();
 		result.add(m.getStart());
 		int[] holes=m.getHoles();
 		if (holes!=null) {
@@ -23,13 +25,13 @@ public class SpanAccessor<T extends GenericMarkable> implements IAccessor<T,TInt
 	}
 
 	@Override
-	public void put(GenericMarkable m, TIntArrayList parts) {
-		m.setStart(parts.get(0));
+	public void put(GenericMarkable m, Span parts) {
+		m.setStart(parts.getStart());
 		if (parts.size()>2) {
-			m.setHoles(parts.subList(1, parts.size()-2).toArray());
+			m.setHoles(parts.getHoles());
 		} else {
 			m.setHoles(null);
 		}
-		m.setEnd(parts.get(parts.size()-1));
+		m.setEnd(parts.getEnd());
 	}
 }
