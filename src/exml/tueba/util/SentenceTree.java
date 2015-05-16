@@ -1,9 +1,12 @@
 package exml.tueba.util;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.Lists;
 
@@ -31,6 +34,10 @@ public class SentenceTree {
 		return _roots;
 	}
 	
+	public TuebaSentenceMarkable getSent() {
+		return _sent;
+	}
+	
 	public int getStart() {
 		return _terminals.get(0).getStart();
 	}
@@ -52,6 +59,7 @@ public class SentenceTree {
 			for (NamedObject m: Lists.reverse(roots)) {
 				try {
 					TuebaNodeMarkable node = (TuebaNodeMarkable)m;
+					//System.err.println("root toVisit:"+m.getXMLId());
 					toVisit.push(node);
 					posn.push(0);
 				} catch(ClassCastException ex) {}
@@ -66,22 +74,25 @@ public class SentenceTree {
 
 		@Override
 		public TuebaNodeMarkable next() {
-			TuebaNodeMarkable result = toVisit.peek();
+			TuebaNodeMarkable result = toVisit.pop();
 			Integer pos = posn.pop();
 			// advance over any terminals
 			while (pos != result.getChildren().size()) {
-				if (result.getChildren() instanceof TuebaTerminal) {
+				if (result.getChildren().get(pos) instanceof TuebaTerminal) {
 					pos++;
 				} else {
-					posn.push(pos+1);
-					pos = 0;
-					result = (TuebaNodeMarkable)result.getChildren().get(pos);
 					toVisit.push(result);
+					posn.push(pos + 1);
+					result = (TuebaNodeMarkable)result.getChildren().get(pos);
+					pos = 0;
 				}
 			}
-			toVisit.pop();
-			return result;
+			if (toVisit.size() != posn.size()) {
+				System.err.println("toVisit:"+toVisit);
+				System.err.println("posn:   "+posn);
 			}
+			return result;
+		}
 
 		@Override
 		public void remove() {
@@ -107,6 +118,7 @@ public class SentenceTree {
 		for (TuebaSentenceMarkable sent: doc.sentences.getMarkables()) {
 			List<NamedObject> roots = new ArrayList<NamedObject>();
 			List<TuebaTerminal> terminals = new ArrayList<TuebaTerminal>();
+			//System.err.format("sentence %s [%d-%d]\n", sent.getXMLId(), sent.getStart(), sent.getEnd());
 			for (int i = sent.getStart(); i < sent.getEnd(); i++) {
 				TuebaTerminal node = doc.getTerminal(i);
 				terminals.add(node);
@@ -117,6 +129,8 @@ public class SentenceTree {
 			for (TuebaNodeMarkable node: doc.nodes.getMarkablesInRange(sent.getStart(), sent.getEnd())) {
 				if (node.getParent() == null) {
 					roots.add(node);
+				} else {
+					//System.err.format("not a root: %s %s\n", node.getCat(), node.getWords(doc));
 				}
 			}
 			// TODO sort roots by start
@@ -206,5 +220,24 @@ public class SentenceTree {
 			}
 		}
 		return node_num;
+	}
+	
+	public static void main(String[] args) {
+		TuebaDocument doc;
+		try {
+			doc = TuebaDocument.loadDocument(args[0]);
+			for (SentenceTree t : SentenceTree.getTrees(doc)) {
+				System.out.println("sentence: "+t.getSent()+" start:"+t.getStart());
+				System.out.println(t.getRoots());
+				for (TuebaNodeMarkable n : t.ntEnumerateBottomUp()) {
+					System.out.println(String.format("visited: (%s %s)",
+							n.getCat(),
+							StringUtils.join(n.getWords(doc), " ")));
+				}
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

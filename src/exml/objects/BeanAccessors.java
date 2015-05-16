@@ -22,6 +22,7 @@ import exml.annotations.EXMLRelation;
 import exml.annotations.MarkableSchema;
 import exml.simple.SimpleToken;
 import exml.tueba.TuebaNEMarkable;
+import exml.tueba.TuebaNodeInterface;
 
 /**
  * BeanAccessors provides some magic glue such that you can use any
@@ -305,6 +306,14 @@ public class BeanAccessors extends ClassLoader implements Opcodes{
 					conv = new ReferenceConverter<NamedObject>();
 				} else if (val_cls.isEnum()) {
 					conv = new JavaEnumConverter(val_cls);
+				} else if (val_cls == List.class) {
+					Class elm_type = (Class) ((ParameterizedType)acc.val_type).getActualTypeArguments()[0];
+					if (NamedObject.class.isAssignableFrom(elm_type) ||
+							TuebaNodeInterface.class.isAssignableFrom(elm_type)) {
+						conv = new IDListConverter();
+					} else {
+						throw new RuntimeException("No list converter for class:"+elm_type.toString());
+					}
 				} else {
 					throw new RuntimeException("No converter for class:"+val_cls.toString());
 				}

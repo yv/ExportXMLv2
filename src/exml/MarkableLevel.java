@@ -98,7 +98,7 @@ public class MarkableLevel<T extends GenericMarkable> {
 		List<T> result=new ArrayList<T>();
 		T dummyMarkable=schema.createMarkable();
 		dummyMarkable.setStart(start);
-		dummyMarkable.setEnd(-1);
+		dummyMarkable.setEnd(Integer.MAX_VALUE);
 		SortedSet<T> part=_markables.tailSet(dummyMarkable);
 		for (T m: part) {
 			if (m.getStart()>=end) {
