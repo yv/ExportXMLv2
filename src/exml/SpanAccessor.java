@@ -2,7 +2,7 @@ package exml;
 
 import exml.objects.Attribute;
 import exml.objects.IAccessor;
-import gnu.trove.list.array.TIntArrayList;
+import org.eclipse.collections.impl.list.mutable.primitive.IntArrayList;
 
 public class SpanAccessor<T extends GenericMarkable> implements IAccessor<T,Span>{
 
@@ -18,7 +18,7 @@ public class SpanAccessor<T extends GenericMarkable> implements IAccessor<T,Span
 		result.add(m.getStart());
 		int[] holes=m.getHoles();
 		if (holes!=null) {
-			result.add(holes);
+			result.addAll(holes);
 		}
 		result.add(m.getEnd());
 		return result;

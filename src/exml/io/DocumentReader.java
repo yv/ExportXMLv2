@@ -139,7 +139,10 @@ public class DocumentReader<E extends GenericTerminal> {
 	private final <M extends GenericMarkable> void push_markable(ObjectSchema<M> schema,StartElement elm)
 	{
 		M new_m=schema.createMarkable();
-		new_m.setXMLId(elm.getAttributeByName(qname_xmlid).getValue());
+		javax.xml.stream.events.Attribute qname_attr = elm.getAttributeByName(qname_xmlid);
+		if (qname_attr != null) {
+			new_m.setXMLId(qname_attr.getValue());
+		}
 		new_m.setStart(_doc.size());
 		_doc.nameForObject(new_m);
 		setObjectAttributes(new_m,schema,elm);
@@ -296,17 +299,17 @@ public class DocumentReader<E extends GenericTerminal> {
 	 * @param is input to be read
 	 * @throws XMLStreamException
 	 */
-	public static void readDocument(Document<?> d, InputStream is) throws XMLStreamException {
+	public static <T extends GenericTerminal> void readDocument(Document<T> d, InputStream is) throws XMLStreamException {
 		XMLInputFactory factory=XMLInputFactory.newInstance();
 		XMLEventReader xml_reader=factory.createXMLEventReader(is);
-		DocumentReader doc_reader=new DocumentReader(d, xml_reader);
+		DocumentReader<T> doc_reader=new DocumentReader<T>(d, xml_reader);
 		doc_reader.readBody();
 		xml_reader.close();
 	}
 	
 	/**
 	 * reads one ExportXMLv2 document without doing anything with it
-	 * @param args
+	 * @param args command-line arguments
 	 */
 	public static void main(String[] args) {
 		try {

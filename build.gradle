@@ -1,0 +1,54 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'maven-publish'
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['test']
+        }
+        resources {
+            srcDirs = ['test']
+            include '**/*.exml.xml'
+        }
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+task getDeps(type: Copy) {
+    from configurations.runtime
+    into 'lib/'
+}
+
+build.finalizedBy(getDeps)
+
+dependencies {
+    compile group: 'com.fasterxml', name: 'aalto-xml', version: '0.9.9'
+    compile group: 'org.codehaus.woodstox', name: 'stax2-api', version: '3.1.4'
+    compile group: 'com.google.guava', name: 'guava', version: '15.0'
+    compile group: 'org.eclipse.collections', name: 'eclipse-collections-api', version: '8.1.0'
+    compile group: 'org.eclipse.collections', name: 'eclipse-collections', version: '8.1.0'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.3.2'
+    compile group: 'org.ow2.asm', name: 'asm', version: '5.0.3'
+    testCompile 'junit:junit:4.12'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'de.versley'
+            artifactId 'exportxml'
+            version '1.0.8'
+            from components.java
+        }
+    }
+}

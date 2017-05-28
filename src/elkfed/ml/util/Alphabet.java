@@ -17,7 +17,7 @@
 
 package elkfed.ml.util;
 
-import gnu.trove.map.hash.TObjectIntHashMap;
+import org.eclipse.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,58 +28,70 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-/** A mapping between integers and objects where the mapping in each
- *  direction is efficient. The trick is given by (1) using an ArrayList
- *  for going from integers to objects and a map to go from objects to
- *  integers; (2) use the GNU trove libraries. Integers are assigned
- *  consecutively, starting at zero, as objects are added to the Alphabet.
- *  Objects can not be deleted from the Alphabet and thus the integers
- *  are never reused.
- *  <p>
- *  The most common use of an alphabet is as a dictionary of feature names.
- *  This class is simply a simplified version of the same Alphabet class
- *  given in the MALLET toolkit (just removed methods and added Java 5
- *  generics).
+/**
+ * A mapping between integers and objects where the mapping in each
+ * direction is efficient. The trick is given by (1) using an ArrayList
+ * for going from integers to objects and a map to go from objects to
+ * integers; (2) use the GNU trove libraries. Integers are assigned
+ * consecutively, starting at zero, as objects are added to the Alphabet.
+ * Objects can not be deleted from the Alphabet and thus the integers
+ * are never reused.
+ * <p>
+ * The most common use of an alphabet is as a dictionary of feature names.
+ * This class is simply a simplified version of the same Alphabet class
+ * given in the MALLET toolkit (just removed methods and added Java 5
+ * generics).
  */
 
-public class Alphabet<T> implements Serializable
-{
+public class Alphabet<T> implements Serializable {
     private static final long serialVersionUID = 0xfeedfeeb1ef42L;
 
-	/** The actual map */
-    private TObjectIntHashMap<T> map;
-    
-    /** The actual entries */
-    private ArrayList<T> entries;
-    private boolean _growing=true;
-    
-    /** The class of the entries */
+    /**
+     * The actual map
+     */
+    private ObjectIntHashMap<T> map;
 
-    /** Creates a new instance of Alphabet */
-    public Alphabet(int capacity)
-    {
-        this.map = new TObjectIntHashMap<T>(capacity);
+    /**
+     * The actual entries
+     */
+    private ArrayList<T> entries;
+    private boolean _growing = true;
+
+    /**
+     * Creates a new instance of Alphabet
+     */
+    public Alphabet(int capacity) {
+        this.map = new ObjectIntHashMap<T>(capacity);
         this.entries = new ArrayList<T>(capacity);
     }
 
-    public void stopGrowth() {_growing=false;}
-    public void startGrowth() {_growing=true;}
-    
-    /** Creates a new instance of Alphabet */
-    public Alphabet ()
-    { this(16); }
+    public void stopGrowth() {
+        _growing = false;
+    }
 
-    /** Return the index of a given object. Add the Object to this if not
-     *  present */
-    public int lookupIndex (T entry)
-    {
-        if (entry == null)
-        { throw new IllegalArgumentException ("Can't lookup \"null\" in an Alphabet."); }
+    public void startGrowth() {
+        _growing = true;
+    }
 
-        if (map.containsKey(entry))
-        { return map.get( entry ); }
-        else if (_growing)
-        {
+    /**
+     * Creates a new instance of Alphabet
+     */
+    public Alphabet() {
+        this(16);
+    }
+
+    /**
+     * Return the index of a given object. Add the Object to this if not
+     * present
+     */
+    public int lookupIndex(T entry) {
+        if (entry == null) {
+            throw new IllegalArgumentException("Can't lookup \"null\" in an Alphabet.");
+        }
+
+        if (map.containsKey(entry)) {
+            return map.get(entry);
+        } else if (_growing) {
             int toReturn = entries.size();
             map.put(entry, toReturn);
             entries.add(entry);
@@ -89,83 +101,75 @@ public class Alphabet<T> implements Serializable
         }
     }
 
-    public T lookupObject(int index)
-    { return entries.get(index); }
-
-    public Object[] toArray()
-    { return entries.toArray(); }
-
-
-    public boolean contains (Object entry)
-    { return map.contains (entry); }
-
-    public int size ()
-    { return entries.size(); }
-
-    public void dump()
-    {
-        for (int i = 0; i < entries.size(); i++)
-        { System.out.println (i + " => "+ entries.get (i)); }
+    public T lookupObject(int index) {
+        return entries.get(index);
     }
 
-    /** Return String representation of all Alphabet entries,
-     *  each separated by a newline. */
+    public Object[] toArray() {
+        return entries.toArray();
+    }
+
+    public int size() {
+        return entries.size();
+    }
+
+    public void dump() {
+        for (int i = 0; i < entries.size(); i++) {
+            System.out.println(i + " => " + entries.get(i));
+        }
+    }
+
+    /**
+     * Return String representation of all Alphabet entries,
+     * each separated by a newline.
+     */
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < entries.size(); i++) {
-                sb.append (entries.get(i).toString());
-                sb.append ('\n');
+            sb.append(entries.get(i).toString());
+            sb.append('\n');
         }
         return sb.toString();
     }
-    
+
     // --------------------> SERIALIZATION <--------------------
-    
-    public void save(File saveFile)
-    { 
-        try
-        {
+
+    public void save(File saveFile) {
+        try {
             writeObject(new ObjectOutputStream(new FileOutputStream(saveFile)));
-        }
-        catch (IOException ioe) {
-            throw new RuntimeException("Cannot save alphabet",ioe);
+        } catch (IOException ioe) {
+            throw new RuntimeException("Cannot save alphabet", ioe);
         }
     }
-    
-    private void writeObject(ObjectOutputStream out) throws IOException
-    {
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
         out.writeInt(entries.size());
-        for (int i = 0; i < entries.size(); i++)
-        { out.writeObject(entries.get(i)); }
+        for (int i = 0; i < entries.size(); i++) {
+            out.writeObject(entries.get(i));
+        }
     }
-    
-    public void load(File loadFile)
-    {
-        try
-        {
+
+    public void load(File loadFile) {
+        try {
             readObject(new ObjectInputStream(new FileInputStream(loadFile)));
         }
         // TODO: do proper exception handling
         catch (IOException ioe) {
-            throw new RuntimeException("Cannot load alphabet",ioe);
-        }
-        catch (ClassNotFoundException cnfe) {
-            throw new RuntimeException("Cannot load alphabet",cnfe);
+            throw new RuntimeException("Cannot load alphabet", ioe);
+        } catch (ClassNotFoundException cnfe) {
+            throw new RuntimeException("Cannot load alphabet", cnfe);
         }
     }
-    
+
     @SuppressWarnings("unchecked")
-	private void readObject (ObjectInputStream in)
-                            throws IOException, ClassNotFoundException
-    {
+    private void readObject(ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
         int size = in.readInt();
-        this.map = new TObjectIntHashMap<T>(size);
+        this.map = new ObjectIntHashMap<T>(size);
         this.entries = new ArrayList<T>(size);
-        for (int i = 0; i < size; i++)
-        {
-            T o =(T) in.readObject();
+        for (int i = 0; i < size; i++) {
+            T o = (T) in.readObject();
             this.map.put(o, i);
             this.entries.add(o);
         }

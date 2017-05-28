@@ -54,9 +54,9 @@ public class MarkableLevel<T extends GenericMarkable> {
 	
 	/**
 	 * adds a new markable with a contiguous span from <code>start</code> to <code>end</code>
-	 * @param attributes the attributes that the markable should have
+	 * @param start the start of the new markable
+	 * @param end the end of the new markable
 	 * @return the new markable
-	 * @throws MissingObjectException
 	 */
 	public T addMarkable(int start, int end) throws MissingObjectException {
 		T val=schema.createMarkable();

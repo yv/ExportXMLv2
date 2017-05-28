@@ -1,0 +1,37 @@
+<exml-doc>
+    <schema>
+        <node name="topic">
+        </node>
+    </schema>
+    <body serialization="inline">
+        <text>
+            <sentence>
+                <topic>
+                    <word form="This"/>
+                    <word form="is"/>
+                    <word form="a"/>
+                </topic>
+                <word form="sentence"/>
+                <word form="."/>
+            </sentence>
+            <topic>
+                <sentence>
+                    <word form="No"/>
+                    <word form="object"/>
+                    <word form="has"/>
+                    <word form="an"/>
+                    <word form="ID"/>
+                    <word form="."/>
+                </sentence>
+                <sentence>
+                    <word form="Ümläüts"/>
+                    <word form="and"/>
+                    <word form="&#8220;non&#8221;-ISO"/>
+                    <word form="(╯°□°）╯︵┻━┻"/>
+                    <word form="work"/>
+                    <word form="."/>
+                </sentence>
+            </topic>
+        </text>
+    </body>
+</exml-doc>

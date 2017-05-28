@@ -1,0 +1,9 @@
+bin/
+build/
+dist/
+lib/
+.classpath
+*.log$
+*.aux$
+~$
+*.pdf$
