@@ -3,14 +3,7 @@
 
 package exml.tueba;
 import elkfed.ml.util.Alphabet;
-import exml.objects.ObjectSchema;
-import exml.objects.NamedObject;
-import exml.objects.GenericObjectFactory;
-import exml.objects.StringConverter;
-import exml.objects.ReferenceConverter;
-import exml.objects.Attribute;
-import exml.objects.GenericAccessor;
-import exml.objects.IAccessor;
+import exml.objects.*;
 
 public class TuebaRelationSchema extends ObjectSchema<TuebaRelationEdge>
     {
@@ -30,7 +23,7 @@ public class TuebaRelationSchema extends ObjectSchema<TuebaRelationEdge>
                        return o.getType(); }
                     public void put(TuebaRelationEdge o, String v) {
                        o.setType(v); }},
-                new StringConverter());
+                new EnumConverter());
         public static final Attribute<TuebaRelationEdge, TuebaNodeInterface> ATTR_target = new Attribute<TuebaRelationEdge, TuebaNodeInterface> ("target",
                 new IAccessor<TuebaRelationEdge, TuebaNodeInterface>() {
                     public TuebaNodeInterface get(TuebaRelationEdge o) {

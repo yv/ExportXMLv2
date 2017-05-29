@@ -3,14 +3,7 @@
 
 package exml.tueba;
 import elkfed.ml.util.Alphabet;
-import exml.objects.ObjectSchema;
-import exml.objects.NamedObject;
-import exml.objects.GenericObjectFactory;
-import exml.objects.StringConverter;
-import exml.objects.ReferenceConverter;
-import exml.objects.Attribute;
-import exml.objects.GenericAccessor;
-import exml.objects.IAccessor;
+import exml.objects.*;
 
 public class TuebaConnectiveSchema extends ObjectSchema<TuebaConnectiveEdge>
     {
@@ -37,14 +30,14 @@ public class TuebaConnectiveSchema extends ObjectSchema<TuebaConnectiveEdge>
                        return o.getRel1(); }
                     public void put(TuebaConnectiveEdge o, String v) {
                        o.setRel1(v); }},
-                new StringConverter());
+                new EnumConverter());
         public static final Attribute<TuebaConnectiveEdge, String> ATTR_rel2 = new Attribute<TuebaConnectiveEdge, String> ("rel2",
                 new IAccessor<TuebaConnectiveEdge, String>() {
                     public String get(TuebaConnectiveEdge o) {
                        return o.getRel2(); }
                     public void put(TuebaConnectiveEdge o, String v) {
                        o.setRel2(v); }},
-                new StringConverter());
+                new EnumConverter());
         public static final TuebaConnectiveSchema instance=new TuebaConnectiveSchema();
 
 

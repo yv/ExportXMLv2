@@ -3,14 +3,7 @@
 
 package exml.tueba;
 import elkfed.ml.util.Alphabet;
-import exml.objects.ObjectSchema;
-import exml.objects.NamedObject;
-import exml.objects.GenericObjectFactory;
-import exml.objects.StringConverter;
-import exml.objects.ReferenceConverter;
-import exml.objects.Attribute;
-import exml.objects.GenericAccessor;
-import exml.objects.IAccessor;
+import exml.objects.*;
 
 public class TuebaDiscRelSchema extends ObjectSchema<TuebaDiscRelEdge>
     {
@@ -30,7 +23,7 @@ public class TuebaDiscRelSchema extends ObjectSchema<TuebaDiscRelEdge>
                        return o.getRelation(); }
                     public void put(TuebaDiscRelEdge o, String v) {
                        o.setRelation(v); }},
-                new StringConverter());
+                new EnumConverter());
         public static final Attribute<TuebaDiscRelEdge, String> ATTR_marking = new Attribute<TuebaDiscRelEdge, String> ("marking",
                 new IAccessor<TuebaDiscRelEdge, String>() {
                     public String get(TuebaDiscRelEdge o) {
@@ -44,7 +37,7 @@ public class TuebaDiscRelSchema extends ObjectSchema<TuebaDiscRelEdge>
                        return o.getArg2(); }
                     public void put(TuebaDiscRelEdge o, NamedObject v) {
                        o.setArg2(v); }},
-                new ReferenceConverter());
+                new ReferenceConverter<>());
         public static final TuebaDiscRelSchema instance=new TuebaDiscRelSchema();
 
 

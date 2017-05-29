@@ -3,14 +3,7 @@
 
 package exml.tueba;
 import elkfed.ml.util.Alphabet;
-import exml.objects.ObjectSchema;
-import exml.objects.NamedObject;
-import exml.objects.GenericObjectFactory;
-import exml.objects.StringConverter;
-import exml.objects.ReferenceConverter;
-import exml.objects.Attribute;
-import exml.objects.GenericAccessor;
-import exml.objects.IAccessor;
+import exml.objects.*;
 
 public class TuebaNodeSchema extends ObjectSchema<TuebaNodeMarkable>
     {
@@ -30,21 +23,21 @@ public class TuebaNodeSchema extends ObjectSchema<TuebaNodeMarkable>
                        return o.getCat(); }
                     public void put(TuebaNodeMarkable o, String v) {
                        o.setCat(v); }},
-                new StringConverter());
+                new EnumConverter());
         public static final Attribute<TuebaNodeMarkable, String> ATTR_edge_label = new Attribute<TuebaNodeMarkable, String> ("func",
                 new IAccessor<TuebaNodeMarkable, String>() {
                     public String get(TuebaNodeMarkable o) {
                        return o.getEdge_label(); }
                     public void put(TuebaNodeMarkable o, String v) {
                        o.setEdge_label(v); }},
-                new StringConverter());
+                new EnumConverter());
         public static final Attribute<TuebaNodeMarkable, TuebaNodeMarkable> ATTR_parent = new Attribute<TuebaNodeMarkable, TuebaNodeMarkable> ("parent",
                 new IAccessor<TuebaNodeMarkable, TuebaNodeMarkable>() {
                     public TuebaNodeMarkable get(TuebaNodeMarkable o) {
                        return o.getParent(); }
                     public void put(TuebaNodeMarkable o, TuebaNodeMarkable v) {
                        o.setParent(v); }},
-                new ReferenceConverter());
+                new ReferenceConverter<>());
         public static final Attribute<TuebaNodeMarkable, String> ATTR_comment = new Attribute<TuebaNodeMarkable, String> ("comment",
                 new IAccessor<TuebaNodeMarkable, String>() {
                     public String get(TuebaNodeMarkable o) {

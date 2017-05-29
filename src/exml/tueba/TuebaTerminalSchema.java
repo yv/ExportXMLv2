@@ -3,14 +3,7 @@
 
 package exml.tueba;
 import elkfed.ml.util.Alphabet;
-import exml.objects.ObjectSchema;
-import exml.objects.GenericObjectFactory;
-import exml.objects.NamedObject;
-import exml.objects.StringConverter;
-import exml.objects.ReferenceConverter;
-import exml.objects.IAccessor;
-import exml.objects.GenericAccessor;
-import exml.objects.Attribute;
+import exml.objects.*;
 
 public class TuebaTerminalSchema extends ObjectSchema<TuebaTerminal>
 {
@@ -38,14 +31,14 @@ public class TuebaTerminalSchema extends ObjectSchema<TuebaTerminal>
                        return o.getCat(); }
                     public void put(TuebaTerminal o, String v) {
                        o.setCat(v); }},
-                new StringConverter());
+                new EnumConverter());
         public static final Attribute<TuebaTerminal, String> ATTR_morph = new Attribute<TuebaTerminal, String> ("morph",
                 new IAccessor<TuebaTerminal, String>() {
                     public String get(TuebaTerminal o) {
                        return o.getMorph(); }
                     public void put(TuebaTerminal o, String v) {
                        o.setMorph(v); }},
-                new StringConverter());
+                new EnumConverter());
         public static final Attribute<TuebaTerminal, String> ATTR_lemma = new Attribute<TuebaTerminal, String> ("lemma",
                 new IAccessor<TuebaTerminal, String>() {
                     public String get(TuebaTerminal o) {
@@ -59,7 +52,7 @@ public class TuebaTerminalSchema extends ObjectSchema<TuebaTerminal>
                        return o.getEdge_label(); }
                     public void put(TuebaTerminal o, String v) {
                        o.setEdge_label(v); }},
-                new StringConverter());
+                new EnumConverter());
         public static final Attribute<TuebaTerminal, TuebaNodeMarkable> ATTR_parent = new Attribute<TuebaTerminal, TuebaNodeMarkable> ("parent",
                 new IAccessor<TuebaTerminal, TuebaNodeMarkable>() {
                     public TuebaNodeMarkable get(TuebaTerminal o) {
@@ -87,14 +80,14 @@ public class TuebaTerminalSchema extends ObjectSchema<TuebaTerminal>
                        return o.getSyn_parent(); }
                     public void put(TuebaTerminal o, TuebaTerminal v) {
                        o.setSyn_parent(v); }},
-                new ReferenceConverter());
+                new ReferenceConverter<>());
         public static final Attribute<TuebaTerminal, String> ATTR_syn_label = new Attribute<TuebaTerminal, String> ("deprel",
                 new IAccessor<TuebaTerminal, String>() {
                     public String get(TuebaTerminal o) {
                        return o.getSyn_label(); }
                     public void put(TuebaTerminal o, String v) {
                        o.setSyn_label(v); }},
-                new StringConverter());
+                new EnumConverter());
         public static final Attribute<TuebaTerminal, String> ATTR_comment = new Attribute<TuebaTerminal, String> ("comment",
                 new IAccessor<TuebaTerminal, String>() {
                     public String get(TuebaTerminal o) {

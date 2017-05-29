@@ -3,14 +3,7 @@
 
 package exml.tueba;
 import elkfed.ml.util.Alphabet;
-import exml.objects.ObjectSchema;
-import exml.objects.NamedObject;
-import exml.objects.GenericObjectFactory;
-import exml.objects.StringConverter;
-import exml.objects.ReferenceConverter;
-import exml.objects.Attribute;
-import exml.objects.GenericAccessor;
-import exml.objects.IAccessor;
+import exml.objects.*;
 
 public class TuebaNESchema extends ObjectSchema<TuebaNEMarkable>
     {
@@ -30,7 +23,7 @@ public class TuebaNESchema extends ObjectSchema<TuebaNEMarkable>
                        return o.getKind(); }
                     public void put(TuebaNEMarkable o, String v) {
                        o.setKind(v); }},
-                new StringConverter());
+                new EnumConverter());
         public static final TuebaNESchema instance=new TuebaNESchema();
 
 
