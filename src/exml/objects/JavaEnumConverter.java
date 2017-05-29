@@ -67,4 +67,8 @@ public class JavaEnumConverter<E extends Enum<E>> implements IConverter<E> {
 		writer.writeCharacters("\n");
 		writer.writeEndElement();
 	}
+
+	public ConverterKind getKind() {
+		return ConverterKind.ENUM;
+	}
 }

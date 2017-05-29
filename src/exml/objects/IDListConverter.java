@@ -43,4 +43,7 @@ public class IDListConverter<T extends NamedObject> implements IConverter<List<T
 		writer.writeEndElement();
 	}
 
+	public ConverterKind getKind() {
+		return ConverterKind.REFLIST;
+	}
 }

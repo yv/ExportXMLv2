@@ -53,4 +53,8 @@ public class EnumConverter extends StringConverter {
 		writer.writeCharacters("\n");
 		writer.writeEndElement();
 	}
+
+	public ConverterKind getKind() {
+	    return ConverterKind.ENUM;
+    }
 }

@@ -230,7 +230,16 @@ public class Document<T extends GenericTerminal> {
 		}
 		return schema;
 	}
-	
+
+	public List<String> listMarkableLevels() {
+		List<String> result = new ArrayList<>();
+		for (String level: _levels_by_name.keySet()) {
+			result.add(level);
+		}
+		Collections.sort(result);
+		return result;
+	}
+
 	/**
 	 * retrieves the markable level with a given name
 	 * 

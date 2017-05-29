@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import exml.objects.ConverterKind;
 import exml.objects.IConverter;
 
 public class SpanConverter implements IConverter<Span> {
@@ -54,5 +55,9 @@ public class SpanConverter implements IConverter<Span> {
 	public void declareAttribute(String name, XMLStreamWriter writer)
 			throws XMLStreamException {
 		// the span attribute is always implied.
+	}
+
+	public ConverterKind getKind() {
+		return ConverterKind.OTHER;
 	}
 }

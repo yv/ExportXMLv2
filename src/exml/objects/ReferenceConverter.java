@@ -29,4 +29,10 @@ public class ReferenceConverter<T extends NamedObject> implements IConverter<T> 
 		writer.writeAttribute("name", name);
 		writer.writeEndElement();
 	}
+
+	@Override
+	public ConverterKind getKind() {
+		return ConverterKind.REF;
+	}
+
 }

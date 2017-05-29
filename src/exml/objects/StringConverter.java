@@ -25,4 +25,8 @@ public class StringConverter implements IConverter<String> {
 		writer.writeAttribute("name", name);
 		writer.writeEndElement();
 	}
+
+	public ConverterKind getKind() {
+		return ConverterKind.STRING;
+	}
 }
