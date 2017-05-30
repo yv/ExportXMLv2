@@ -57,6 +57,8 @@ dependencies {
     compile group: 'org.eclipse.collections', name: 'eclipse-collections', version: '8.1.0'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.3.2'
     compile group: 'org.ow2.asm', name: 'asm', version: '5.0.3'
+    compile 'org.msgpack:msgpack-core:0.8.13'
+    compile 'org.xerial.snappy:snappy-java:1.1.4'
     testCompile 'junit:junit:4.12'
 }
 
@@ -65,7 +67,7 @@ publishing {
         maven(MavenPublication) {
             groupId 'de.versley'
             artifactId 'exportxml'
-            version '1.0.8'
+            version '1.0.9'
             from components.java
             artifact javadocJar
             artifact sourcesJar
