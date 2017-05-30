@@ -26,7 +26,7 @@ public class GenericObject {
 	
 	/**
 	 * read an attribute
-	 * @param name
+	 * @param name the name of the slot as registered in the slots table
 	 * @return the attribute value
 	 */
 	public Object getSlotByName(String name) {

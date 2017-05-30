@@ -21,10 +21,15 @@ public class ObjectSchema<T extends GenericObject> {
 		int idx=slotnames.lookupIndex(name);
 		return new GenericAccessor<T,V>(idx);		
 	}
-	
+
+	public void addStringAttribute(String name) {
+		addAttribute(name, StringConverter.instance);
+	}
+
 	public <V> void addAttribute(String name, IConverter<V> cvt) {
 		if (attrs.containsKey(name)) {
-			if (attrs.get(name).converter != cvt) {
+			Attribute<T, V> old_attr = (Attribute<T, V>) attrs.get(name);
+			if (old_attr.converter != cvt) {
 				// TODO detect whether old and new declaration are incompatible
 				// System.err.println("Attribute "+name+" already declared, doing nothing.");
 			}
@@ -76,7 +81,7 @@ public class ObjectSchema<T extends GenericObject> {
 	 * returns true if it's possible to create and use objects of
 	 * class cls2 with this ObjectSchema
 	 * @param cls2 a class of objects
-	 * @return
+	 * @return true if we can use this schema
 	 */
 	public boolean isCompatibleWith(Class<?> cls2) {
 		return cls2.isAssignableFrom(_cls);

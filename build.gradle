@@ -33,6 +33,20 @@ task wrapper(type: Wrapper) {
     gradleVersion = '3.5'
 }
 
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
 build.finalizedBy(getDeps)
 
 dependencies {
@@ -53,6 +67,8 @@ publishing {
             artifactId 'exportxml'
             version '1.0.8'
             from components.java
+            artifact javadocJar
+            artifact sourcesJar
         }
     }
 }

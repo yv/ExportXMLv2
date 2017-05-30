@@ -4,7 +4,7 @@ package exml.objects;
  *  (a) being able to special-case value conversion in MsgPack
  *  (b) being able to create a suitable attribute incl. converter
  *
- *  These are used as int IDs in MessagePack -> be careful with changes
+ *  These are used as int IDs in MessagePack -&gt; be careful with changes
  */
 public enum ConverterKind {
     // serialized to a string and back, open set of values
