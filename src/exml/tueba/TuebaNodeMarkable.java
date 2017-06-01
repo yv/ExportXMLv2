@@ -20,6 +20,7 @@ public class TuebaNodeMarkable extends GenericMarkable
     private String _edge_label;
     private TuebaNodeMarkable _parent;
     private String _comment;
+
     @EXMLAttribute("cat")
     public String getCat() {
         return _cat;
@@ -52,11 +53,11 @@ public class TuebaNodeMarkable extends GenericMarkable
     public void setComment(String val) {
        _comment = val;
     }
-    public List<NamedObject> getChildren() {
-        return (List<NamedObject>) getSlot(TuebaNodeSchema.IDX_children);
+    public List<TuebaNodeInterface> getChildren() {
+        return (List<TuebaNodeInterface>) getSlot(TuebaNodeSchema.IDX_children);
     }
 
-    public void setChildren(List<NamedObject> val) {
+    public void setChildren(List<TuebaNodeInterface> val) {
         setSlot(TuebaNodeSchema.IDX_children, val);
     }
     public List<TuebaSecEdgeEdge> getSecEdge() {

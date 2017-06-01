@@ -2,16 +2,19 @@ package exml;
 
 import java.util.Comparator;
 
+import exml.objects.AbstractNamedObject;
 import exml.objects.NamedObject;
 import exml.objects.ObjectSchema;
 
 /**
  * represents a markable (annotated span) that only
- * has generic properties.
+ * has generic properties. Subclasses can be defined that
+ * have their own (not-generic) properties.
+ *
  * @author yannickv
  *
  */
-public class GenericMarkable extends NamedObject {
+public class GenericMarkable extends AbstractNamedObject {
 	private int _start=-1;
 	private int _end=-1;
 	private int[] _holes;
@@ -31,7 +34,8 @@ public class GenericMarkable extends NamedObject {
 	public void setHoles(int[] holes) {
 		_holes=holes;
 	}
-	
+
+	@Override
 	public int getStart() {
 		return _start;
 	}	

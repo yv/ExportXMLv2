@@ -324,18 +324,17 @@ public class BeanAccessors extends ClassLoader implements Opcodes{
 	}
 	
 	public static <E extends GenericObject> GenericObjectFactory<E> factoryForClass(final Class<E> cls) {
-		return new GenericObjectFactory<E>() { 
-				public E createObject(ObjectSchema<E> schema) { 
-					try {
-						try {
-							return cls.newInstance();
-						} catch (InstantiationException ex2) {
-							    Constructor<E> c = cls.getConstructor(ObjectSchema.class);
-							    return c.newInstance(schema);
-						}
-					} catch (Exception ex) {
-						throw new RuntimeException("Cannot create", ex);}
-				}};
+		return schema -> {
+            try {
+                try {
+                    return cls.newInstance();
+                } catch (InstantiationException ex2) {
+                        Constructor<E> c = cls.getConstructor(ObjectSchema.class);
+                        return c.newInstance(schema);
+                }
+            } catch (Exception ex) {
+                throw new RuntimeException("Cannot create", ex);}
+        };
 	}
 	
 	@SuppressWarnings("unchecked")

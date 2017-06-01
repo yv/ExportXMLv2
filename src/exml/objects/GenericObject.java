@@ -38,9 +38,7 @@ public class GenericObject {
 			_slots[idx]=val;
 		} catch (ArrayIndexOutOfBoundsException e) {
 			Object[] newslots=new Object[idx+1];
-			for (int i=0;i<_slots.length;i++) {
-				newslots[i]=_slots[i];
-			}
+			System.arraycopy(_slots, 0, newslots, 0, _slots.length);
 			_slots=newslots;
 			_slots[idx]=val;
 		}

@@ -5,6 +5,7 @@ import java.util.List;
 import exml.MarkableLevel;
 import exml.objects.NamedObject;
 import exml.tueba.TuebaDocument;
+import exml.tueba.TuebaNodeInterface;
 import exml.tueba.TuebaNodeMarkable;
 import exml.tueba.TuebaTerminal;
 
@@ -27,7 +28,7 @@ public class CheckChildren {
 	}
 	
 	public void checkNode(TuebaNodeMarkable node) {
-		List<NamedObject> children = node.getChildren();
+		List<TuebaNodeInterface> children = node.getChildren();
 		if (children.size() == 0) {
 			System.out.format("Empty children list: %s %s\n",
 					node.getXMLId(),

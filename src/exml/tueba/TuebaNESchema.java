@@ -7,15 +7,6 @@ import exml.objects.*;
 
 public class TuebaNESchema extends ObjectSchema<TuebaNEMarkable>
     {
-        public static class TuebaNEFactory
-          implements GenericObjectFactory<TuebaNEMarkable>
-        {
-            public TuebaNEMarkable createObject(ObjectSchema<TuebaNEMarkable> schema)
-            {
-                return new TuebaNEMarkable();
-            }
-        }
-        public static TuebaNEFactory factory=new TuebaNEFactory();
         public static final Alphabet<String> global_alph=new Alphabet<String>();
         public static final Attribute<TuebaNEMarkable, String> ATTR_kind = new Attribute<TuebaNEMarkable, String> ("type",
                 new IAccessor<TuebaNEMarkable, String>() {
@@ -29,7 +20,7 @@ public class TuebaNESchema extends ObjectSchema<TuebaNEMarkable>
 
         public TuebaNESchema() {
             super("ne", TuebaNEMarkable.class,
-                  factory, global_alph);
+                    (schema) -> new TuebaNEMarkable(), global_alph);
             addAttribute(ATTR_kind);
         }
 }

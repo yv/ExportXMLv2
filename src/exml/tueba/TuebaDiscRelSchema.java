@@ -7,15 +7,8 @@ import exml.objects.*;
 
 public class TuebaDiscRelSchema extends ObjectSchema<TuebaDiscRelEdge>
     {
-        public static class TuebaDiscRelFactory
-          implements GenericObjectFactory<TuebaDiscRelEdge>
-        {
-            public TuebaDiscRelEdge createObject(ObjectSchema<TuebaDiscRelEdge> schema)
-            {
-                return new TuebaDiscRelEdge();
-            }
-        }
-        public static TuebaDiscRelFactory factory=new TuebaDiscRelFactory();
+        public static final GenericObjectFactory<TuebaDiscRelEdge> factory =
+                ((schema) -> new TuebaDiscRelEdge());
         public static final Alphabet<String> global_alph=new Alphabet<String>();
         public static final Attribute<TuebaDiscRelEdge, String> ATTR_relation = new Attribute<TuebaDiscRelEdge, String> ("relation",
                 new IAccessor<TuebaDiscRelEdge, String>() {

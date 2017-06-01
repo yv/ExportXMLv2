@@ -1,5 +1,6 @@
 package exml;
 
+import exml.objects.AbstractNamedObject;
 import exml.objects.NamedObject;
 import exml.objects.ObjectSchema;
 
@@ -10,7 +11,7 @@ import exml.objects.ObjectSchema;
  *
  */
 
-public class GenericTerminal extends NamedObject {
+public class GenericTerminal extends AbstractNamedObject {
 	private int _corpus_pos;
 	private String _word;
 	public GenericTerminal(ObjectSchema<? extends GenericTerminal> schema) {

@@ -88,7 +88,8 @@ public class Document<T extends GenericTerminal> {
 	 * resolves a (string) reference to an object (markable or terminal)
 	 * @param s the ID of the object
 	 * @return the object with that ID
-	 * @throws MissingObjectException
+	 * @throws MissingObjectException if there is a reference that cannot be
+	 * resolved in the current document
 	 */
 	public NamedObject resolveObject(String s) throws MissingObjectException {
 		NamedObject val=_obj_by_id.get(s);
@@ -119,6 +120,7 @@ public class Document<T extends GenericTerminal> {
 	/**
 	 * Returns a list of all terminals in the document that have the target relation. 
 	 * Changes to this list change the document structure.
+     * @param relName the name of the edge/relation
 	 * @return list of terminals
 	 */
 	public List<T> getTerminalsWithEdge(String relName) {
@@ -189,11 +191,15 @@ public class Document<T extends GenericTerminal> {
 	/**
 	 * gives the ID of an object. Sets an ID if that object has none.
 	 * @param o the object
+	 * @param assign if false, objects without an ID will not get one assigned
 	 * @return the ID of the object.
 	 */
-	public String nameForObject(NamedObject o) {
+	public String nameForObject(NamedObject o, boolean assign) {
 		String nm=o.getXMLId();
 		if (nm==null) {
+		    if (!assign) {
+		        return null;
+            }
 			do {
 				nm=randomName("m", 6);
 			} while (_obj_by_id.containsKey(nm));
@@ -204,7 +210,11 @@ public class Document<T extends GenericTerminal> {
 		}
 		return nm;
 	}
-	
+
+	public String nameForObject(NamedObject o) {
+	    return nameForObject(o, true);
+    }
+
 	/**
 	 * retrieves the markable schema with a given name
 	 * 
@@ -341,8 +351,8 @@ public class Document<T extends GenericTerminal> {
 	}
 	
 	/**
-	 * adds a new termina
-	 * 	 * @param word the token to be added
+	 * adds a new terminal
+	 * @param word the token to be added
 	 * @return the terminal object
 	 */
 	public T createTerminal(String word) {
@@ -358,6 +368,7 @@ public class Document<T extends GenericTerminal> {
 	 * @param level the name of the level
 	 * @return the markable
 	 */
+	@Deprecated
 	public GenericMarkable createMarkable(String level) {
 		ObjectSchema<? extends GenericMarkable> ms=_schemas_by_name.get(level);
 		return ms.createMarkable();
@@ -375,14 +386,17 @@ public class Document<T extends GenericTerminal> {
 	 * given the ID of a terminal, returns its position in the corpus
 	 * @param string the terminal node's ID
 	 * @return the position
-	 * @throws MissingObjectException
+	 * @throws MissingObjectException if the position ID is not known
 	 */
 	public int getPosition(String string) throws MissingObjectException {
 		T terminal=(T)resolveObject(string);
 		return terminal.get_corpus_pos();
 	}
 	
-	/** adds all markables to their parent's child list */
+	/** adds all markables to their parent's child list
+     * @param parentName the property name of the parent property
+     * @param chldAcc the accessor for the child
+     */
 	public <P extends GenericObject> void addToChildList(
 			String parentName,
 			IAccessor<P,List<NamedObject>> chldAcc) {
@@ -401,7 +415,9 @@ public class Document<T extends GenericTerminal> {
 		}
 	}
 	
-	/** sorts the child lists by position */
+	/** sorts the child lists by position
+     * @param chldAcc the accessor for the children list
+     */
 	public void sortChildList(IAccessor<T,List<NamedObject>> chldAcc) {
 		for (T m: _terminals) {
 			List<NamedObject> chlds=chldAcc.get(m);
@@ -409,7 +425,7 @@ public class Document<T extends GenericTerminal> {
 				chlds=new ArrayList<NamedObject>();
 				chldAcc.put(m,chlds);
 			}
-			Collections.sort(chlds,NamedObject.byPosition);
+			chlds.sort(NamedObject.byPosition);
 		}
 	}
 }

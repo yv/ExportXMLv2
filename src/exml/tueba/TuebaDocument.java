@@ -110,8 +110,9 @@ public class TuebaDocument extends Document<TuebaTerminal> {
 	 * given input file.
 	 * 
 	 * @param xmlFile
-	 *            a file in TueBa export xml format.
+	 *            the name of a file in TueBa export xml format.
      * @return the loaded TuebaDocument
+     * @throws FileNotFoundException if there is no file with that name
 	 */
 	public static TuebaDocument loadDocument(String xmlFile)
         throws FileNotFoundException

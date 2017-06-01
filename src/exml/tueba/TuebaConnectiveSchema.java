@@ -7,15 +7,8 @@ import exml.objects.*;
 
 public class TuebaConnectiveSchema extends ObjectSchema<TuebaConnectiveEdge>
     {
-        public static class TuebaConnectiveFactory
-          implements GenericObjectFactory<TuebaConnectiveEdge>
-        {
-            public TuebaConnectiveEdge createObject(ObjectSchema<TuebaConnectiveEdge> schema)
-            {
-                return new TuebaConnectiveEdge();
-            }
-        }
-        public static TuebaConnectiveFactory factory=new TuebaConnectiveFactory();
+        public static GenericObjectFactory<TuebaConnectiveEdge> factory=
+                (schema) -> new TuebaConnectiveEdge();
         public static final Alphabet<String> global_alph=new Alphabet<String>();
         public static final Attribute<TuebaConnectiveEdge, String> ATTR_konn = new Attribute<TuebaConnectiveEdge, String> ("konn",
                 new IAccessor<TuebaConnectiveEdge, String>() {

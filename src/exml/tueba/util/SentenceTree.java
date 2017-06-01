@@ -6,23 +6,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
+import exml.tueba.*;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.Lists;
 
 import exml.objects.NamedObject;
-import exml.tueba.TuebaDocument;
-import exml.tueba.TuebaNodeMarkable;
-import exml.tueba.TuebaSentenceMarkable;
-import exml.tueba.TuebaTerminal;
 
 public class SentenceTree {
-	private List<NamedObject> _roots;
+	private List<TuebaNodeInterface> _roots;
 	private List<TuebaTerminal> _terminals;
 	private TuebaDocument _doc;
 	private TuebaSentenceMarkable _sent;
 
-	public SentenceTree(List<NamedObject> roots, List<TuebaTerminal> terminals,
+	public SentenceTree(List<TuebaNodeInterface> roots, List<TuebaTerminal> terminals,
 			TuebaSentenceMarkable sent, TuebaDocument doc) {
 		_roots = roots;
 		_terminals = terminals;
@@ -30,7 +27,7 @@ public class SentenceTree {
 		_doc = doc;
 	}
 	
-	public List<NamedObject> getRoots() {
+	public List<TuebaNodeInterface> getRoots() {
 		return _roots;
 	}
 	
@@ -42,7 +39,7 @@ public class SentenceTree {
 		return _terminals.get(0).getStart();
 	}
 	
-	public void setRoots(List<NamedObject> _roots) {
+	public void setRoots(List<TuebaNodeInterface> _roots) {
 		this._roots = _roots;
 	}
 	public List<TuebaTerminal> getTerminals() {
@@ -55,16 +52,14 @@ public class SentenceTree {
 	class BottomUpIterator implements Iterator<TuebaNodeMarkable> {
 		Stack<TuebaNodeMarkable> toVisit = new Stack<TuebaNodeMarkable>();
 		Stack<Integer> posn = new Stack<Integer>();
-		BottomUpIterator(List<NamedObject> roots) {
+		BottomUpIterator(List<TuebaNodeInterface> roots) {
 			for (NamedObject m: Lists.reverse(roots)) {
 				try {
 					TuebaNodeMarkable node = (TuebaNodeMarkable)m;
-					//System.err.println("root toVisit:"+m.getXMLId());
 					toVisit.push(node);
 					posn.push(0);
-				} catch(ClassCastException ex) {}
+				} catch(ClassCastException ignored) {}
 			}
-			
 		}
 
 		@Override
@@ -116,7 +111,7 @@ public class SentenceTree {
 	public static List<SentenceTree> getTrees(TuebaDocument doc) {
 		List<SentenceTree> result = new ArrayList<SentenceTree>();
 		for (TuebaSentenceMarkable sent: doc.sentences.getMarkables()) {
-			List<NamedObject> roots = new ArrayList<NamedObject>();
+			List<TuebaNodeInterface> roots = new ArrayList<TuebaNodeInterface>();
 			List<TuebaTerminal> terminals = new ArrayList<TuebaTerminal>();
 			//System.err.format("sentence %s [%d-%d]\n", sent.getXMLId(), sent.getStart(), sent.getEnd());
 			for (int i = sent.getStart(); i < sent.getEnd(); i++) {
@@ -129,8 +124,6 @@ public class SentenceTree {
 			for (TuebaNodeMarkable node: doc.nodes.getMarkablesInRange(sent.getStart(), sent.getEnd())) {
 				if (node.getParent() == null) {
 					roots.add(node);
-				} else {
-					//System.err.format("not a root: %s %s\n", node.getCat(), node.getWords(doc));
 				}
 			}
 			// TODO sort roots by start
@@ -144,7 +137,7 @@ public class SentenceTree {
 		reassignParents(_roots, null);
 	}
 	
-	public void reassignParents(List<NamedObject> nodes, TuebaNodeMarkable parent) {
+	public void reassignParents(List<TuebaNodeInterface> nodes, TuebaNodeMarkable parent) {
 		for (NamedObject node: nodes) {
 			try {
 				TuebaNodeMarkable n = (TuebaNodeMarkable)node;
@@ -164,7 +157,7 @@ public class SentenceTree {
 		reassignSpans(_roots, null);
 	}
 	
-	private void reassignSpans(List<NamedObject> nodes, TuebaNodeMarkable parent) {
+	private void reassignSpans(List<TuebaNodeInterface> nodes, TuebaNodeMarkable parent) {
 		int start=Integer.MAX_VALUE;
 		int end=Integer.MIN_VALUE;
 		for (NamedObject node: nodes) {
@@ -203,9 +196,9 @@ public class SentenceTree {
 		insertNodes(_roots, 500);
 	}
 	
-	protected int insertNodes(List<NamedObject> nodes, int node_num) {
+	protected int insertNodes(List<TuebaNodeInterface> nodes, int node_num) {
 		// System.err.println("insert nodes"+ nodes);
-		for (NamedObject node: nodes) {
+		for (TuebaNodeInterface node: nodes) {
 			try {
 				TuebaNodeMarkable n = (TuebaNodeMarkable)node;
 				_doc.nodes.addMarkable(n);

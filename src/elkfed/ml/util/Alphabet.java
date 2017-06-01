@@ -59,6 +59,7 @@ public class Alphabet<T> implements Serializable {
 
     /**
      * Creates a new instance of Alphabet
+     * @param capacity initial capacity
      */
     public Alphabet(int capacity) {
         this.map = new ObjectIntHashMap<T>(capacity);
@@ -83,6 +84,8 @@ public class Alphabet<T> implements Serializable {
     /**
      * Return the index of a given object. Add the Object to this if not
      * present
+     * @param entry the object that is to be looked up
+     * @return the index of the object
      */
     public int lookupIndex(T entry) {
         if (entry == null) {
