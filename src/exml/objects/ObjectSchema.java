@@ -26,20 +26,38 @@ public class ObjectSchema<T extends GenericObject> {
 		addAttribute(name, StringConverter.instance);
 	}
 
-	public <V> void addAttribute(String name, IConverter<V> cvt) {
+	public <V> Attribute<T,V> addAttribute(String name, IConverter<V> cvt) {
 		if (attrs.containsKey(name)) {
 			Attribute<T, V> old_attr = (Attribute<T, V>) attrs.get(name);
 			if (old_attr.converter != cvt) {
-				// TODO detect whether old and new declaration are incompatible
-				// System.err.println("Attribute "+name+" already declared, doing nothing.");
+                // detect whether old and new declaration are incompatible
+			    // stringly-typed attributes are ok, replace attribute
+			    if (old_attr.converter instanceof StringConverter
+                        && cvt instanceof StringConverter) {
+                    Attribute<T, V> result = new Attribute<T,V>(name, this.<V>genericAccessor(name), cvt);
+                    attrs.put(name, result);
+                    return result;
+                } else if (old_attr.converter instanceof ReferenceConverter
+                        && cvt instanceof ReferenceConverter) {
+			        // that'll be fine
+                } else {
+                    throw new RuntimeException(
+                            String.format("[%s] Cannot replace converter %s by %s",
+                                    name, old_attr.converter, cvt));
+                }
 			}
+			return old_attr;
 		} else {
-			attrs.put(name, new Attribute<T,V>(name, this.<V>genericAccessor(name), cvt));
+			Attribute<T, V> result = new Attribute<T,V>(name, this.<V>genericAccessor(name), cvt);
+			attrs.put(name, result);
+			return result;
 		}
 	}
 	
-	public <V> void addAttribute(String name, IConverter<V> cvt, IAccessor<T,V> avt) {
-		attrs.put(name, new Attribute<T,V>(name, avt, cvt));
+	public <V> Attribute<T,V> addAttribute(String name, IConverter<V> cvt, IAccessor<T,V> avt) {
+		Attribute<T,V> result = new Attribute<T,V>(name, avt, cvt);
+		attrs.put(name, result);
+		return result;
 	}	
 	
 	public <V> void addAttribute(Attribute<T,V> att) {

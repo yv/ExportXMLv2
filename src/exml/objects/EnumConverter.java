@@ -15,11 +15,9 @@ public class EnumConverter extends StringConverter implements IEnumConverter<Str
 	private final Alphabet<String> names = new Alphabet<>();
 	private final List<String> descriptions = new ArrayList<>();
 
-    @Override
-    public String convertToString(String obj, Document doc) {
-        return obj;
+    public String convertFromString(String name, Document<?> doc) {
+        return convertFromString(name);
     }
-
     @Override
     public int endIndex() {
         return names.size();
@@ -35,13 +33,23 @@ public class EnumConverter extends StringConverter implements IEnumConverter<Str
         return names.lookupObject(index);
     }
 
+    public int indexForObject(String obj, boolean growing) {
+        return names.lookupIndex(obj, growing);
+    }
+
     @Override
     public String nameForIndex(int index) {
         return names.lookupObject(index);
     }
 
-    public void addVal(String name, String description) {
-
+    public int addVal(String name, String description) {
+        names.startGrowth();
+        int idx = names.lookupIndex(name);
+        while (descriptions.size() <= idx) {
+            descriptions.add(null);
+        }
+        descriptions.set(idx, description);
+        return idx;
     }
 
     @Override
@@ -51,5 +59,9 @@ public class EnumConverter extends StringConverter implements IEnumConverter<Str
         } catch (IndexOutOfBoundsException ignored) {
             return null;
         }
+    }
+
+    public ConverterKind getKind() {
+        return ConverterKind.ENUM;
     }
 }

@@ -7,8 +7,16 @@ import exml.MarkableLevel;
 import exml.objects.*;
 import exml.tueba.TuebaDocument;
 import exml.tueba.TuebaTerminal;
+import exml.tueba.TuebaTextMarkable;
+import net.jpountz.lz4.LZ4BlockOutputStream;
+import net.jpountz.lz4.LZ4Factory;
+import org.eclipse.collections.impl.list.mutable.primitive.IntArrayList;
+import org.msgpack.core.MessageBufferPacker;
 import org.msgpack.core.MessagePack;
 import org.msgpack.core.MessagePacker;
+import org.msgpack.value.StringValue;
+import org.msgpack.value.Value;
+import org.msgpack.value.ValueFactory;
 import org.xerial.snappy.SnappyOutputStream;
 
 import java.io.*;
@@ -76,15 +84,42 @@ public class MessagePackWriter<T extends GenericTerminal> {
             @SuppressWarnings("rawtypes")
             Attribute att = (Attribute)schema.attrs.get(key);
             _packer.packString(att.name);
-            _packer.packString(att.converter.getKind().name());
+            if (att.converter.getKind() == ConverterKind.ENUM) {
+                IEnumConverter conv = (IEnumConverter) att.converter;
+                _packer.packArrayHeader(2);
+                _packer.packString(att.converter.getKind().name());
+                _packer.packArrayHeader(conv.endIndex());
+                for (int i=0; i < conv.endIndex(); i++) {
+                    _packer.packString(conv.nameForIndex(i));
+                }
+            } else {
+                _packer.packString(att.converter.getKind().name());
+            }
         }
     }
 
     public void writeChunks(Document<T> doc) throws IOException {
         //TODO look for text boundaries and generate one chunk per 30k tokens
         // length doesn't matter much: most ints will fit into 16bit
-        _packer.packArrayHeader(1);
-        writeChunk(doc, 0, doc.size());
+        MarkableLevel<? extends GenericMarkable> mlevel = doc.markableLevelByName("text", false);
+        IntArrayList stops = new IntArrayList();
+        int last_stop = 0;
+        if (mlevel != null && ! mlevel.getMarkables().isEmpty()) {
+            for (GenericMarkable text: mlevel.getMarkables()) {
+                int new_stop=text.getEnd();
+                if (new_stop - last_stop > 50000) {
+                    stops.add(new_stop);
+                    last_stop = new_stop;
+                }
+            }
+        }
+        _packer.packArrayHeader(stops.size()+1);
+        last_stop = 0;
+        for (int new_stop: stops.toArray()) {
+            writeChunk(doc, last_stop, new_stop);
+            last_stop = new_stop;
+        }
+        writeChunk(doc, last_stop, doc.size());
     }
 
     /** serializes a document chunk as an array of:
@@ -111,16 +146,20 @@ public class MessagePackWriter<T extends GenericTerminal> {
             _packer.packString(level);
             MarkableLevel<?> mlevel =
                     doc.markableLevelByName(level, false);
-            writeObjects(doc, mlevel);
+            writeObjects(doc, mlevel, start, end);
         }
     }
 
     public <E extends GenericMarkable> void writeObjects(
-            Document<T> doc, MarkableLevel<E> mlevel) throws IOException {
-        writeObjects(doc, mlevel.schema, mlevel.getMarkables(), true);
+            Document<T> doc, MarkableLevel<E> mlevel, int start, int end) throws IOException {
+        if (start == 0 && end == doc.size()) {
+            writeObjects(doc, mlevel.schema, mlevel.getMarkables(), true);
+        } else {
+            writeObjects(doc, mlevel.schema, mlevel.getMarkablesInRange(start, end), true);
+        }
     }
 
-    public <E extends NamedObject> void writeObjects(
+    public <E extends AbstractNamedObject> void writeObjects(
             Document<T> doc,
             ObjectSchema<E> schema, Collection<E> objects,
             boolean includeSpan) throws IOException {
@@ -130,36 +169,70 @@ public class MessagePackWriter<T extends GenericTerminal> {
 
         List<E> objects_l = new ArrayList<>(objects);
         List<String> s_attrs = new ArrayList<>();
-        List<String[]> values =  new ArrayList<>();
+        List<byte[]> values =  new ArrayList<>();
 
-        String[] ids = new String[objects.size()];
+        MessageBufferPacker partial = MessagePack.newDefaultBufferPacker();
+        partial.packArrayHeader(objects.size());
+        //Value[] ids = new Value[objects.size()];
         boolean any_id = false;
         for (int i = 0; i < objects_l.size(); i++) {
-            ids[i] = objects_l.get(i).getXMLId();
-            if (ids[i] != null) {
+            String s_val = objects_l.get(i).getXMLId();
+            if (s_val != null) {
+                //ids[i] = ValueFactory.newString(s_val);
+                partial.packString(s_val);
                 any_id = true;
+            } else {
+                partial.packNil();
+                //ids[i] = ValueFactory.newNil();
             }
         }
         if (any_id) {
             s_attrs.add(":id");
-            values.add(ids);
+            values.add(partial.toByteArray());
+            partial = MessagePack.newDefaultBufferPacker();
         }
         for (Attribute<E, ?> attr: attributes){
-            String[] vals = new String[objects.size()];
             boolean anyNonNull = false;
-
-            for (int i = 0; i < objects_l.size(); i++) {
-                try {
-                    vals[i] = attr.getString(objects_l.get(i), doc);
-                    if (vals[i] != null) {
+            partial = MessagePack.newDefaultBufferPacker();
+            partial.packArrayHeader(objects.size());
+            //Value[] vals = new Value[objects.size()];
+            if (attr.converter.getKind() == ConverterKind.ENUM) {
+                // convert Enum values to ints
+                IEnumConverter conv = (IEnumConverter) attr.converter;
+                for (int i = 0; i < objects_l.size(); i++) {
+                    Object val = attr.accessor.get(objects_l.get(i));
+                    if (val != null) {
                         anyNonNull = true;
+                        int idx = conv.indexForObject(val, false);
+                        if (idx == -1) {
+                            partial.packString(conv.convertToString(objects_l.get(i), doc));
+                        } else {
+                            partial.packInt(idx);
+                        }
+                    } else {
+                        partial.packNil();
                     }
-                } catch (NullPointerException e) {
+                }
+            } else {
+                // TODO convert same-layer Ref values to int offsets
+                for (int i = 0; i < objects_l.size(); i++) {
+                    try {
+                        String s = attr.getString(objects_l.get(i), doc);
+                        if (s == null) {
+                            partial.packNil();
+                        } else {
+                            partial.packString(s);
+                            anyNonNull = true;
+                        }
+                    } catch (NullPointerException e) {
+                        //vals[i] = ValueFactory.newNil();
+                        partial.packNil();
+                    }
                 }
             }
             if (anyNonNull) {
                 s_attrs.add(attr.name);
-                values.add(vals);
+                values.add(partial.toByteArray());
             }
         }
         _packer.packArrayHeader(s_attrs.size() + (includeSpan ? 1 : 0));
@@ -170,17 +243,8 @@ public class MessagePackWriter<T extends GenericTerminal> {
             _packer.packString(":span");
         }
         _packer.packArrayHeader(s_attrs.size()+ (includeSpan ? 1 : 0));
-        for (String[] vals: values){
-            // TODO convert enum values to int
-            // TODO convert same-layer refs to int offsets
-            _packer.packArrayHeader(objects.size());
-            for (String s: vals) {
-                if (s == null) {
-                    _packer.packNil();
-                } else {
-                    _packer.packString(s);
-                }
-            }
+        for (int val_idx = 0; val_idx < values.size(); val_idx++) {
+            _packer.addPayload(values.get(val_idx));
         }
         if (includeSpan) {
             // TODO what about holes?
@@ -196,10 +260,22 @@ public class MessagePackWriter<T extends GenericTerminal> {
         }
     }
 
+    private static OutputStream wrapCompression(OutputStream out, String filename) {
+        if (filename.endsWith(".exml.bin")) {
+            return out;
+        } else if (filename.endsWith(".exml.snp")) {
+            return new SnappyOutputStream(out);
+        } else if (filename.endsWith(".exml.lz4")) {
+            return new LZ4BlockOutputStream(out, 64<<10, LZ4Factory.unsafeInstance().highCompressor());
+        } else {
+            throw new RuntimeException("Unknown format extension:"+filename);
+        }
+    }
+
     public static <T extends GenericTerminal>
             void writeBinary(Document<T> doc, String filename) throws IOException {
         OutputStream f = new FileOutputStream(filename);
-        OutputStream f_compressed = new SnappyOutputStream(f);
+        OutputStream f_compressed = wrapCompression(f, filename);
         MessagePacker packer = MessagePack.newDefaultPacker(f_compressed);
         MessagePackWriter<T> writer = new MessagePackWriter<>(packer);
         writer.writeDocument(doc);
@@ -209,8 +285,13 @@ public class MessagePackWriter<T extends GenericTerminal> {
 
     public static void main(String[] args) {
         try {
+            long time0 = System.currentTimeMillis();
             TuebaDocument doc = TuebaDocument.loadDocument(args[0]);
+            long time1 = System.currentTimeMillis();
             writeBinary(doc, args[1]);
+            long time2 = System.currentTimeMillis();
+            System.err.format("Loading as xml:    %d ms\n", time1-time0);
+            System.err.format("Saving as msgpack: %d ms\n", time2-time1);
         } catch (IOException e) {
             e.printStackTrace();
         }

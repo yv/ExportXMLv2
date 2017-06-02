@@ -20,7 +20,6 @@ sourceSets {
 }
 
 repositories {
-    jcenter()
     mavenCentral()
 }
 
@@ -68,7 +67,7 @@ publishing {
         maven(MavenPublication) {
             groupId 'de.versley'
             artifactId 'exportxml'
-            version '1.0.9'
+            version '1.1.0'
             from components.java
             artifact javadocJar
             artifact sourcesJar

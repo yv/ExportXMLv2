@@ -43,7 +43,7 @@ import java.util.ArrayList;
  * generics).
  */
 
-public class Alphabet<T> implements Serializable {
+public final class Alphabet<T> implements Serializable {
     private static final long serialVersionUID = 0xfeedfeeb1ef42L;
 
     /**
@@ -87,14 +87,13 @@ public class Alphabet<T> implements Serializable {
      * @param entry the object that is to be looked up
      * @return the index of the object
      */
-    public int lookupIndex(T entry) {
+    public int lookupIndex(T entry, boolean growing) {
         if (entry == null) {
             throw new IllegalArgumentException("Can't lookup \"null\" in an Alphabet.");
         }
-
         if (map.containsKey(entry)) {
             return map.get(entry);
-        } else if (_growing) {
+        } else if (growing) {
             int toReturn = entries.size();
             map.put(entry, toReturn);
             entries.add(entry);
@@ -102,6 +101,9 @@ public class Alphabet<T> implements Serializable {
         } else {
             return -1;
         }
+    }
+    public int lookupIndex(T entry) {
+        return lookupIndex(entry, _growing);
     }
 
     public T lookupObject(int index) {
@@ -157,11 +159,8 @@ public class Alphabet<T> implements Serializable {
         try {
             readObject(new ObjectInputStream(new FileInputStream(loadFile)));
         }
-        // TODO: do proper exception handling
-        catch (IOException ioe) {
+        catch (IOException | ClassNotFoundException ioe) {
             throw new RuntimeException("Cannot load alphabet", ioe);
-        } catch (ClassNotFoundException cnfe) {
-            throw new RuntimeException("Cannot load alphabet", cnfe);
         }
     }
 

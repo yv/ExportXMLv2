@@ -30,6 +30,7 @@ public class DocumentWriter<T extends GenericTerminal> {
 	public static String SPACES = "                                                    ";
 	protected Document<T> _doc;
 	protected XMLStreamWriter _writer;
+	boolean _skipEmpty = true;
 	@SuppressWarnings("rawtypes")
 	protected Stack<WriterStackEntry> _openTags =
 			new Stack<WriterStackEntry>();
@@ -197,12 +198,16 @@ public class DocumentWriter<T extends GenericTerminal> {
 		_writer.writeCharacters("\n");
 		// declare all markable levels
 		for (String key: _doc.getMarkableLevelNames()) {
-			_writer.writeStartElement("node");
-			_writer.writeAttribute("name", key);
-			_writer.writeCharacters("\n");
-			writeSchemaContents(_doc.markableSchemaByName(key, false));
-			_writer.writeEndElement();
-			_writer.writeCharacters("\n");
+			MarkableLevel<? extends GenericMarkable> mlevel =
+					_doc.markableLevelByName(key, false);
+			if (mlevel.getMarkables().size() > 0) {
+				_writer.writeStartElement("node");
+				_writer.writeAttribute("name", key);
+				_writer.writeCharacters("\n");
+				writeSchemaContents(_doc.markableSchemaByName(key, false));
+				_writer.writeEndElement();
+				_writer.writeCharacters("\n");
+			}
 		}
 		// then declare all edges
 		for (String key: _doc.getEdgeNames()) {
@@ -210,10 +215,14 @@ public class DocumentWriter<T extends GenericTerminal> {
 			_writer.writeAttribute("name", key);
 			List<String> parents=new ArrayList<String>();
 			for (String keyM: _doc.getMarkableLevelNames()) {
-				ObjectSchema schema = _doc.markableSchemaByName(keyM, false);
-				if (schema.rels.containsKey(key)) {
-					parents.add(keyM);
-				}
+                ObjectSchema schema = _doc.markableSchemaByName(keyM, false);
+                if (schema.rels.containsKey(key)) {
+                    MarkableLevel<? extends GenericMarkable> mlevel =
+                            _doc.markableLevelByName(keyM, false);
+                    if (mlevel.getMarkables().size() > 0) {
+                        parents.add(keyM);
+                    }
+                }
 			}
 			ObjectSchema tschema = _doc.terminalSchema();
 			if (tschema.rels.containsKey(key)) {

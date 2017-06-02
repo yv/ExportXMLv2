@@ -28,6 +28,10 @@ public class JavaEnumConverter<E extends Enum<E>> implements IConverter<E> {
 			addVal(e.name(), null, e);
 		}
 	}
+
+	public int indexForObject(E obj, boolean growing) {
+	    return obj.ordinal();
+    }
 	
 	public void addVal(String n, String d, E v) {
 		EnumVal<E> val = new EnumVal<E>(n,d,v);
