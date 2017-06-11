@@ -83,7 +83,10 @@ public class Document<T extends GenericTerminal> {
 	public static Document<GenericTerminal> createDocument() {
 		return new Document<GenericTerminal>(GenericTerminal.class, new GenericTerminalFactory());
 	}
-	
+
+	public boolean hasNamedObject(String s) {
+		return _obj_by_id.containsKey(s);
+	}
 	/**
 	 * resolves a (string) reference to an object (markable or terminal)
 	 * @param s the ID of the object

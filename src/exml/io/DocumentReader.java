@@ -21,14 +21,7 @@ import exml.GenericTerminal;
 import exml.MarkableLevel;
 import exml.MissingObjectException;
 import exml.SpanAccessor;
-import exml.objects.Attribute;
-import exml.objects.EnumConverter;
-import exml.objects.GenericObject;
-import exml.objects.NamedObject;
-import exml.objects.ObjectSchema;
-import exml.objects.ReferenceConverter;
-import exml.objects.Relation;
-import exml.objects.StringConverter;
+import exml.objects.*;
 
 
 /**
@@ -257,10 +250,16 @@ public class DocumentReader<E extends GenericTerminal> {
 				System.err.println("No declared attribute:"+att_name+"="+att_val+"/"+obj_attr);
 				continue;
 			}
-			try {
-				obj_attr.putString(newObj, att_val, _doc);
-			} catch (MissingObjectException e) {
-				_fixups.add(new Fixup(newObj,obj_attr,att_val));
+			final ConverterKind kind = obj_attr.converter.getKind();
+			if (kind == ConverterKind.REF &&
+					!_doc.hasNamedObject(att_val)) {
+				_fixups.add(new Fixup(newObj, obj_attr, att_val));
+			} else {
+				try {
+					obj_attr.putString(newObj, att_val, _doc);
+				} catch (MissingObjectException e) {
+					_fixups.add(new Fixup(newObj,obj_attr,att_val));
+				}
 			}
 		}
 	}

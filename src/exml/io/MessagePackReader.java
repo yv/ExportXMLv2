@@ -13,6 +13,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 /** Reads a MessagePack binary XML stream
  */
@@ -324,11 +325,13 @@ public class MessagePackReader<T extends GenericTerminal> {
 
     public static InputStream wrapDecompress(InputStream f_in, String filename) throws IOException {
         if (filename.endsWith(".exml.bin")) {
-            return f_in;
+            return new BufferedInputStream(f_in);
         } else if (filename.endsWith(".exml.snp")) {
             return new SnappyInputStream(f_in);
         } else if (filename.endsWith(".exml.lz4")) {
             return new LZ4BlockInputStream(f_in);
+        } else if (filename.endsWith(".exml.bin.gz")) {
+            return new GZIPInputStream(f_in);
         } else {
             throw new RuntimeException("Unknown format extension:"+filename);
         }
@@ -345,15 +348,16 @@ public class MessagePackReader<T extends GenericTerminal> {
 
     public static void main(String[] args) {
         try {
-            TuebaDocument doc = new TuebaDocument();
-            long time0 = System.currentTimeMillis();
-            readBinary(doc, args[0]);
-            long time1 = System.currentTimeMillis();
-            DocumentWriter.writeDocument(doc,
-                new FileOutputStream(args[1]));
-            long time2 = System.currentTimeMillis();
-            System.err.format("Loading as msgpack: %d ms\n", time1-time0);
-            System.err.format("Saving as xml:      %d ms\n", time2-time1);
+                TuebaDocument doc = new TuebaDocument();
+                long time0 = System.currentTimeMillis();
+                readBinary(doc, args[0]);
+                long time1 = System.currentTimeMillis();
+                DocumentWriter.writeDocument(doc,
+                        new FileOutputStream(
+                                args[1]));
+                long time2 = System.currentTimeMillis();
+                System.err.format("Loading as msgpack: %d ms\n", time1 - time0);
+                System.err.format("Saving as xml:      %d ms\n", time2 - time1);
         } catch (IOException|XMLStreamException e) {
             e.printStackTrace();
             System.exit(1);

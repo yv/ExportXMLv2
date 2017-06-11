@@ -25,8 +25,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
+import java.util.zip.GZIPOutputStream;
 
-/** Support for writing msgpack files
+/** Support for writing msgpack files.
  */
 public class MessagePackWriter<T extends GenericTerminal> {
     private MessagePacker _packer;
@@ -260,13 +261,15 @@ public class MessagePackWriter<T extends GenericTerminal> {
         }
     }
 
-    private static OutputStream wrapCompression(OutputStream out, String filename) {
+    private static OutputStream wrapCompression(OutputStream out, String filename) throws IOException {
         if (filename.endsWith(".exml.bin")) {
             return out;
         } else if (filename.endsWith(".exml.snp")) {
-            return new SnappyOutputStream(out);
+            return new SnappyOutputStream(new BufferedOutputStream(out));
         } else if (filename.endsWith(".exml.lz4")) {
-            return new LZ4BlockOutputStream(out, 64<<10, LZ4Factory.unsafeInstance().highCompressor());
+            return new LZ4BlockOutputStream(out, 64 << 10, LZ4Factory.unsafeInstance().highCompressor());
+        } else if (filename.endsWith(".exml.bin.gz")) {
+            return new GZIPOutputStream(out, 8<<10);
         } else {
             throw new RuntimeException("Unknown format extension:"+filename);
         }
@@ -288,10 +291,10 @@ public class MessagePackWriter<T extends GenericTerminal> {
             long time0 = System.currentTimeMillis();
             TuebaDocument doc = TuebaDocument.loadDocument(args[0]);
             long time1 = System.currentTimeMillis();
+            System.err.format("Loading as xml:    %d ms\n", time1-time0);
             writeBinary(doc, args[1]);
             long time2 = System.currentTimeMillis();
-            System.err.format("Loading as xml:    %d ms\n", time1-time0);
-            System.err.format("Saving as msgpack: %d ms\n", time2-time1);
+            System.err.format("Saving as msgpack: %d ms\n", time2 - time1);
         } catch (IOException e) {
             e.printStackTrace();
         }
